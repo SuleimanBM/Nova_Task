@@ -26,14 +26,7 @@ class TodaysTask extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.black, width: 1),
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: const Color.fromARGB(255, 17, 16, 16).withOpacity(0.5),
-            //     spreadRadius: 4,
-            //     blurRadius: 2,
-            //     offset: const Offset(-2, 2),
-            //   ),]
+            //border: Border.all(color: Colors.black, width: 1),
           ),
           child: const Center(
             child: Text("No Tasks",

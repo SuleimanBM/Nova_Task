@@ -52,7 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+      // appBar: AppBar(
+      //   title: const Text('NovaTask'),
+      // ),
       bottomNavigationBar: NavigationBar(
         destinations: const [
         NavigationDestination(
@@ -75,8 +78,8 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       },
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+      body: SafeArea(
+        
         child: [HomeScreen(), TasksScreen(), CategoriesScreen()][currentPageIndex],
       ),
     );

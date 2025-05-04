@@ -3,7 +3,6 @@ import 'package:nova_task/features/home/presentation/widgets/statistics.dart';
 import 'package:nova_task/features/home/presentation/widgets/todaysTask.dart';
 import 'package:nova_task/features/home/presentation/widgets/upcomingList.dart';
 
-
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
@@ -48,15 +47,22 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
+      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
-        // title: const Text('Home'),
-      ),
+          // title: const Text('Home'),
+          ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('NovaTask', style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),  // const Text('NovaTask', style: TextStyle(fontSize: 32),),
+              const Text('NovaTask',
+                  style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight
+                          .bold)), // const Text('NovaTask', style: TextStyle(fontSize: 32),),
               IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
             ],
           ),
@@ -104,60 +110,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-// class upcomingList extends StatelessWidget {
-//   const upcomingList({
-//     super.key,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.all(8),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(10),
-//         border: Border.all(color: Colors.black, width: 1),
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           const Text(
-//             "Grocery Shopping for the week Grocery Shopping for the week",
-//             overflow: TextOverflow.ellipsis,
-//             style: TextStyle(
-//                 fontSize: 16,
-//                 fontWeight: FontWeight.bold,
-//                 color: Color.fromARGB(255, 17, 16, 16)),
-//           ),
-//           const SizedBox(
-//             height: 8,
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               Container(
-//                 padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
-//                 decoration: BoxDecoration(
-//                   color: const Color.fromARGB(255, 245, 115, 106),
-//                   borderRadius: BorderRadius.circular(7),
-//                 ),
-//                 child: const Text(
-//                   "high",
-//                   style: TextStyle(
-//                       fontSize: 16,
-//                       fontWeight: FontWeight.w500,
-//                       color: Color.fromARGB(255, 216, 0, 0)),
-//                 ),
-//               ),
-//               Row(children: [
-//                 const Icon(Icons.calendar_month),
-//                 Text(DateTime.now().toString())
-//               ])
-//             ],
-//           )
-//         ],
-//       ),
-//     );
-//   }
- 
