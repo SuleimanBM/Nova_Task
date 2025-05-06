@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nova_task/features/home/presentation/widgets/statistics.dart';
-import 'package:nova_task/features/home/presentation/widgets/todaysTask.dart';
-import 'package:nova_task/features/home/presentation/widgets/upcomingList.dart';
+import 'package:nova_task/features/tasks/presentation/widgets/statistics.dart';
+import 'package:nova_task/features/tasks/presentation/widgets/todaysTask.dart';
+import 'package:nova_task/features/tasks/presentation/widgets/upcomingList.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -50,22 +50,22 @@ class HomeScreen extends StatelessWidget {
       
       backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
-          // title: const Text('Home'),
-          ),
+        backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+        title: const Text('NovaTask',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.add,
+                size: 32,
+              ))
+        ],
+        scrolledUnderElevation: 0.0,
+      ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('NovaTask',
-                  style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight
-                          .bold)), // const Text('NovaTask', style: TextStyle(fontSize: 32),),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
-            ],
-          ),
           const SizedBox(
             height: 24,
           ),

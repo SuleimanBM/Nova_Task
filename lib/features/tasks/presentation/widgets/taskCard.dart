@@ -3,15 +3,19 @@ import "package:intl/intl.dart";
 import "package:nova_task/features/tasks/presentation/screens/addtask_screen.dart";
 
 class TaskCard extends StatefulWidget {
+  final String id;
   final String title;
   final DateTime date;
   final String priority;
+  final String description;
 
   const TaskCard({
     super.key,
+    required this.id,
     required this.date,
     required this.priority,
     required this.title,
+    required this.description,
   });
 
   @override
@@ -24,7 +28,8 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AddtaskScreen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => AddtaskScreen()));
       },
       child: Container(
         padding: const EdgeInsets.all(8),
@@ -53,10 +58,8 @@ class _TaskCardState extends State<TaskCard> {
                         color: Color.fromARGB(255, 17, 16, 16)),
                   ),
                 ),
-                
                 Column(
                   children: [
-                    
                     Checkbox(
                       value: _isChecked,
                       onChanged: (bool? newValue) {
@@ -68,8 +71,8 @@ class _TaskCardState extends State<TaskCard> {
               ],
             ),
             const SizedBox(height: 8),
-            const Text(
-              "some description about me going about the task I stated earlier and i plan on doing it at a go, I don't want to start half way and then stop and later come back to it",
+            Text(
+              widget.description,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
               style: TextStyle(

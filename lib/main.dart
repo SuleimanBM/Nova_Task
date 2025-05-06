@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:nova_task/features/categories/presentation/screens/categories_screen.dart';
-import 'package:nova_task/features/home/presentation/screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nova_task/features/tasks/presentation/bloc/taskEvents.dart';
+import 'package:nova_task/features/tasks/presentation/screens/categories_screen.dart';
+import 'package:nova_task/features/tasks/presentation/screens/home_screen.dart';
 import 'package:nova_task/features/tasks/presentation/screens/tasks_screen.dart';
+import 'package:nova_task/features/dependencyInjection.dart';
+import 'package:nova_task/features/tasks/presentation/bloc/taskBloc.dart';
+import 'package:get_it/get_it.dart';
+import "package:nova_task/features/dependencyInjection.dart" as di;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized;
+  await di.initDependencies();
   runApp(const MyApp());
 }
 
@@ -16,24 +24,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(),
     );
   }
@@ -58,29 +52,35 @@ class _MyHomePageState extends State<MyHomePage> {
       // ),
       bottomNavigationBar: NavigationBar(
         destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.task),
-          label: 'Tasks',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.category),
-          label: 'Categories',
-        ),
-      ],
-      selectedIndex: currentPageIndex,
-      onDestinationSelected: (int index) {
-        setState(() {
-          currentPageIndex = index;
-        });
-      },
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.task),
+            label: 'Tasks',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.category),
+            label: 'Categories',
+          ),
+        ],
+        selectedIndex: currentPageIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
       ),
       body: SafeArea(
-        
-        child: [HomeScreen(), TasksScreen(), CategoriesScreen()][currentPageIndex],
+        child: BlocProvider(
+          create: (context) => sl<TaskBloc>()..add(LoadTasks()),
+          child: [
+            HomeScreen(),
+            TasksScreen(),
+            CategoriesScreen()
+          ][currentPageIndex],
+        ),
       ),
     );
   }

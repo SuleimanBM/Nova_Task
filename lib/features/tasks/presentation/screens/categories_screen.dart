@@ -8,10 +8,18 @@ class CategoriesScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
-        title: const Text('Categories'),
-        centerTitle: false,
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.add))],
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+        title: const Text('Categories',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.add,
+                size: 32,
+              ))
+        ],
+        scrolledUnderElevation: 0.0,
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),

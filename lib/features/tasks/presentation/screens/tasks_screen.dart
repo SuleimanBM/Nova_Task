@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import "package:flutter_bloc/flutter_bloc.dart";
 import 'package:nova_task/features/tasks/presentation/widgets/taskCard.dart';
+import "../bloc/taskBloc.dart";
+import "../bloc/taskEvents.dart";
+import "../bloc/taskState.dart";
 
 class TasksScreen extends StatelessWidget {
   TasksScreen({super.key});
@@ -47,60 +51,95 @@ class TasksScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
-          // title: const Text('Home'),
-          ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('NovaTask',
-                  style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight
-                          .bold)), // const Text('NovaTask', style: TextStyle(fontSize: 32),),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.add, size: 32,)),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                   SearchBar(
-                    hintText: 'Search for tasks',
-                    leading: Icon(Icons.search),
-                    constraints: BoxConstraints(
-                      maxWidth: 330,
-                      minHeight: 50
-                      
-                    ),
-                    elevation: WidgetStatePropertyAll(0.0),
-                    backgroundColor: WidgetStatePropertyAll(Colors.white),
-                  ),
-                  Spacer(),
-                  IconButton(onPressed: null, icon: Icon(Icons.filter_list, size: 32,))
-                ],
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: upcomingItems.length,
-                itemBuilder: (context, index) {
-                  return TaskCard(
-                    title: upcomingItems[index]['title'],
-                    date: upcomingItems[index]['date'],
-                    priority: upcomingItems[index]['priority'],
-                  );
-                },
-              )
-            ],
-          )
+        backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+        title: const Text('NovaTask',
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.add,
+                size: 32,
+              ))
         ],
+        scrolledUnderElevation: 0.0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 24.0),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: 
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                     Flexible(
+                      child: SearchBar(
+                        hintText: 'Search for tasks',
+                        leading: Icon(Icons.search),
+                        constraints: BoxConstraints(minHeight: 50),
+                        elevation: WidgetStatePropertyAll(0.0),
+                        backgroundColor: WidgetStatePropertyAll(Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 2),
+                    IconButton(
+                        onPressed: null,
+                        icon: Icon(
+                          Icons.filter_list,
+                          size: 32,
+                        ))
+                  ],
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
+                  print('Current State: $state');
+                  if (state is TaskLoading) {
+                    print('Current State: $state');
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is TaskLoaded) {
+                    print('Current State: $state');
+                      if (state.tasks.isEmpty) {
+                      return const Center(
+                          child: Text("Task is empty")); // ← this might be what you're seeing
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: state.tasks.length,
+                      itemBuilder: (context, index) {
+                        return TaskCard(
+                          id: state.tasks[index].id,
+                          title: state.tasks[index].title,
+                          description: state.tasks[index].description,
+                          date: state.tasks[index].date,
+                          priority: state.tasks[index].priority,
+                        );
+                      },
+                    );
+                  } else {
+                    print('Current State: $state');
+                    return const Center(child: Text("No tasks"));
+                  }
+                }),
+                // ListView.builder(
+                //   shrinkWrap: true,
+                //   physics: NeverScrollableScrollPhysics(),
+                //   itemCount: upcomingItems.length,
+                //   itemBuilder: (context, index) {
+                //     return TaskCard(
+                //       title: upcomingItems[index]['title'],
+                //       date: upcomingItems[index]['date'],
+                //       priority: upcomingItems[index]['priority'],
+                //     );
+                //   },
+                // )
+              ],
+            )
+        ),
       ),
     );
   }
