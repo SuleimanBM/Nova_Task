@@ -6,6 +6,8 @@ class GetAllTasksUsecase {
 
   GetAllTasksUsecase(this.repository);
 
-  Future<List<Task>> execute() => repository.getTasks();
-
+  Future<List<Task>> execute() async{
+     print("💡 UseCase: calling repository.getTasks()");
+    return await repository.getTasks();
+  }
 }

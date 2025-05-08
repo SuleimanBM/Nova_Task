@@ -186,7 +186,7 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                   // ignore: prefer_const_constructors
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: const [
                       TextButton(
                         onPressed: null,
                         style: ButtonStyle(

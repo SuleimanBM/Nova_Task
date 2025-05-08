@@ -45,102 +45,116 @@ class TasksScreen extends StatelessWidget {
       "priority": "high",
     },
   ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-      appBar: AppBar(
+@override
+Widget build(BuildContext context) {
+  return BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
+    print('Current State: $state');
+    if (state is TaskLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is TaskLoaded ) {
+      if (state.tasks.isEmpty) {
+        return const Center(child: Text("Task is empty"));
+      }
+      return Scaffold(
         backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-        title: const Text('NovaTask',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.add,
-                size: 32,
-              ))
-        ],
-        scrolledUnderElevation: 0.0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 24.0),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                     Flexible(
-                      child: SearchBar(
-                        hintText: 'Search for tasks',
-                        leading: Icon(Icons.search),
-                        constraints: BoxConstraints(minHeight: 50),
-                        elevation: WidgetStatePropertyAll(0.0),
-                        backgroundColor: WidgetStatePropertyAll(Colors.white),
-                      ),
-                    ),
-                    SizedBox(width: 2),
-                    IconButton(
-                        onPressed: null,
-                        icon: Icon(
-                          Icons.filter_list,
-                          size: 32,
-                        ))
-                  ],
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
-                  print('Current State: $state');
-                  if (state is TaskLoading) {
-                    print('Current State: $state');
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is TaskLoaded) {
-                    print('Current State: $state');
-                      if (state.tasks.isEmpty) {
-                      return const Center(
-                          child: Text("Task is empty")); // ← this might be what you're seeing
-                    }
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: state.tasks.length,
-                      itemBuilder: (context, index) {
-                        return TaskCard(
-                          id: state.tasks[index].id,
-                          title: state.tasks[index].title,
-                          description: state.tasks[index].description,
-                          date: state.tasks[index].date,
-                          priority: state.tasks[index].priority,
-                        );
-                      },
-                    );
-                  } else {
-                    print('Current State: $state');
-                    return const Center(child: Text("No tasks"));
-                  }
-                }),
-                // ListView.builder(
-                //   shrinkWrap: true,
-                //   physics: NeverScrollableScrollPhysics(),
-                //   itemCount: upcomingItems.length,
-                //   itemBuilder: (context, index) {
-                //     return TaskCard(
-                //       title: upcomingItems[index]['title'],
-                //       date: upcomingItems[index]['date'],
-                //       priority: upcomingItems[index]['priority'],
-                //     );
-                //   },
-                // )
-              ],
-            )
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+          title: const Text('NovaTask',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+          actions: [
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.add,
+                  size: 32,
+                ))
+          ],
+          scrolledUnderElevation: 0.0,
         ),
-      ),
-    );
-  }
+        body: Padding(
+          padding: const EdgeInsets.only(top: 24.0),
+          child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Flexible(
+                        child: SearchBar(
+                          hintText: 'Search for tasks',
+                          leading: Icon(Icons.search),
+                          constraints: BoxConstraints(minHeight: 50),
+                          elevation: WidgetStatePropertyAll(0.0),
+                          backgroundColor: WidgetStatePropertyAll(Colors.white),
+                        ),
+                      ),
+                      SizedBox(width: 2),
+                      IconButton(
+                          onPressed: () async {
+                            final String? filter = await showMenu<String>(
+                                context: context,
+                                position: RelativeRect.fromLTRB(0, 0, 0, 0),
+                                items: [
+                                  const PopupMenuItem<String>(
+                                    value: 'priority',
+                                    child: Text('Priority'),
+                                  ),
+                                  const PopupMenuItem<String>(
+                                    value: 'status',
+                                    child: Text('Status'),
+                                  ),
+                                  const PopupMenuItem<String>(
+                                    value: 'completed',
+                                    child: Text('Completed Only'),
+                                  ),
+                                ]);
+                            if (filter != null) {
+                              if (filter == 'priority') {
+                                  context.read<TaskBloc>().add(FilterTasks(
+                                      priority:
+                                          'High')); // Or get priority from user input
+                                } else if (filter == 'status') {
+                                  context.read<TaskBloc>().add(FilterTasks(
+                                      status:
+                                          'To Do')); // Or get status from user input
+                                } else if (filter == 'completed') {
+                                  context
+                                      .read<TaskBloc>()
+                                      .add(FilterTasks(isCompleted: true));
+                                }
+                            }
+                          },
+                          icon: Icon(
+                            Icons.filter_list,
+                            size: 32,
+                          ))
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: state.tasks.length,
+                    itemBuilder: (context, index) {
+                      return TaskCard(
+                        id: state.tasks[index].id,
+                        title: state.tasks[index].title,
+                        description: state.tasks[index].description,
+                        date: state.tasks[index].date,
+                        priority: state.tasks[index].priority,
+                      );
+                    },
+                  ),
+                ],
+              )),
+        ),
+      );
+    } else {
+      return const Center(child: Text("No tasks"));
+    }
+  });
+}
 }

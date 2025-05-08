@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/statistics.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/todaysTask.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/upcomingList.dart';
+import "../bloc/taskBloc.dart";
+import "../bloc/taskEvents.dart";
+import "../bloc/taskState.dart";
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -46,67 +50,81 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-        title: const Text('NovaTask',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.add,
-                size: 32,
-              ))
-        ],
-        scrolledUnderElevation: 0.0,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          const SizedBox(
-            height: 24,
+    return BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
+      print('Current State: $state');
+      if (state is TaskLoading) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (state is TaskLoaded) {
+        if (state.tasks.isEmpty) {
+          return const Center(child: Text("Task is empty"));
+        }
+        return Scaffold(
+          backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+          appBar: AppBar(
+            backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+            title: const Text('NovaTask',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+            actions: [
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.add,
+                    size: 32,
+                  ))
+            ],
+            scrolledUnderElevation: 0.0,
           ),
-          const TodaysTask(),
-          const SizedBox(
-            height: 24,
-          ),
-          const Statistics(),
-          const SizedBox(
-            height: 24,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          body: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
-              const Text(
-                "Upcoming",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 17, 16, 16),
-                ),
+              const SizedBox(
+                height: 24,
+              ),
+              const TodaysTask(),
+              const SizedBox(
+                height: 24,
+              ),
+              Statistics(
+                completed: state.tasksStatistics!.completed.toString(),
+                pending: state.tasksStatistics!.pending.toString(),
+                overdue: state.tasksStatistics!.overdue.toString(),
               ),
               const SizedBox(
-                height: 16,
+                height: 24,
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: upcomingItems.length,
-                itemBuilder: (context, index) {
-                  return UpcomingList(
-                    title: upcomingItems[index]['title'],
-                    date: upcomingItems[index]['date'],
-                    priority: upcomingItems[index]['priority'],
-                  );
-                },
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Upcoming",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 17, 16, 16),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: upcomingItems.length,
+                    itemBuilder: (context, index) {
+                      return UpcomingList(
+                        title: upcomingItems[index]['title'],
+                        date: upcomingItems[index]['date'],
+                        priority: upcomingItems[index]['priority'],
+                      );
+                    },
+                  )
+                ],
               )
             ],
-          )
-        ],
-      ),
-    );
+          ),
+        );
+      }
+      return const Center(child: Text("Unexpected state"));
+    });
   }
 }

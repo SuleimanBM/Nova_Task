@@ -1,23 +1,29 @@
 import "package:flutter/material.dart";
 
-
 class Statistics extends StatelessWidget {
-  const Statistics({
+  final String completed;
+  final String pending;
+  final String overdue;
+
+  Statistics({
     super.key,
+    required this.completed,
+    required this.pending,
+    required this.overdue
   });
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(children: [
-            Row(children: [
+            const Row(children: [
               Icon(
                 Icons.check_circle,
                 size: 20,
               ),
-              const Text(
+               Text(
                 "Completed",
                 style: TextStyle(
                     fontSize: 20,
@@ -25,21 +31,21 @@ class Statistics extends StatelessWidget {
                     color: Color.fromARGB(255, 17, 16, 16)),
               ),
             ]),
-            const Text(
-              "2494",
-              style: TextStyle(
+            Text(
+              completed,
+              style: const TextStyle(
                   fontSize: 42,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 17, 16, 16)),
             ),
           ]),
           Column(children: [
-            Row(children: [
+            const Row(children: [
               Icon(
                 Icons.timer,
                 size: 20,
               ),
-              const Text(
+              Text(
                 "Pending",
                 style: TextStyle(
                     fontSize: 20,
@@ -47,21 +53,21 @@ class Statistics extends StatelessWidget {
                     color: Color.fromARGB(255, 17, 16, 16)),
               ),
             ]),
-            const Text(
-              "2874",
-              style: TextStyle(
+            Text(
+              pending,
+              style: const TextStyle(
                   fontSize: 42,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 17, 16, 16)),
             ),
           ]),
           Column(children: [
-            Row(children: [
+            const Row(children: [
               Icon(
                 Icons.error_sharp,
                 size: 20,
               ),
-              const Text(
+              Text(
                 "Overdue",
                 style: TextStyle(
                     fontSize: 20,
@@ -69,9 +75,9 @@ class Statistics extends StatelessWidget {
                     color: Color.fromARGB(255, 17, 16, 16)),
               ),
             ]),
-            const Text(
-              "2334",
-              style: TextStyle(
+            Text(
+              overdue,
+              style: const TextStyle(
                   fontSize: 42,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 17, 16, 16)),
