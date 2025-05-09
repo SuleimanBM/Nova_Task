@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/task_model.dart';
+import 'package:nova_task/features/tasks/data/models/taskStatistics.dart';
+import '../models/taskModel.dart';
 
 class RemoteTaskDataSource {
   final http.Client client;
@@ -46,7 +47,9 @@ class RemoteTaskDataSource {
       throw Exception('Failed to load tasks');
     }
     print("response from server $res");
-    return json.decode(res.body);
+    final Map<String, dynamic> jsonBody = json.decode(res.body);
+    final taskStatisticsJson = jsonBody['taskStats'];
+    return TaskStatistics.fromJson(taskStatisticsJson) ;
     
   }
   Future<List<TaskModel>> getFilteredTasks({

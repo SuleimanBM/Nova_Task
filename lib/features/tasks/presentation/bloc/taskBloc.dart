@@ -6,6 +6,7 @@ import './taskEvents.dart';
 import './taskState.dart';
 import '../../domain/useCases/getAllTaskUseCases.dart';
 import "../../domain/useCases/getFilteredTaskUsecase.dart";
+import "../../data/models/taskStatistics.dart";
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final GetAllTasksUsecase _getTasksUseCase;
@@ -30,7 +31,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       print("Fetching task from backend");
       final tasks = await _getTasksUseCase.execute();
       final tasksStatistics = await _getTasksStatisticsUseCase.execute();
-      print('Fetched tasks: ${tasks.length}');
+      print('Fetched tasks: ${tasks}');
+      print(tasksStatistics);
       emit(TaskLoaded(tasks, tasksStatistics as TaskStatistics?));
     } catch (e) {
       emit(TaskError(e.toString()));

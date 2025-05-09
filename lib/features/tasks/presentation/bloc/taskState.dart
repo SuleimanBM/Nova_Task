@@ -1,17 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:nova_task/features/tasks/domain/entities/task.dart';
-
-class TaskStatistics {
-  final int completed;
-  final int pending;
-  final int overdue;
-
-  const TaskStatistics({
-    required this.completed,
-    required this.pending,
-    required this.overdue,
-  });
-}
+import "../../data/models/taskStatistics.dart";
 
 abstract class TaskState extends Equatable {
   @override

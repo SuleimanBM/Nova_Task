@@ -1,5 +1,5 @@
 import "../dataSources/remoteTaskDataSource.dart";
-import "../models/task_model.dart";
+import "../models/taskModel.dart";
 import "../../domain/repositories/taskRepository.dart";
 import "../../domain/entities/task.dart";
 

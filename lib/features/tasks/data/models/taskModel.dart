@@ -5,7 +5,7 @@ class TaskModel {
   final String title;
   final String description;
   final DateTime date;
-  final DateTime time;
+  final String time;
   final String priority;
   final String category;
   final String status;
@@ -31,7 +31,7 @@ class TaskModel {
       title: json['title'] as String,
       description: json['description'] as String,
       date: DateTime.parse(json['dueDate'] as String),
-      time: DateTime.parse(json['time'] as String),
+      time: json['time'] as String,
       priority: json['priority'] as String,
       category: json['category'] as String,
       status: json['status'] as String,
@@ -46,7 +46,7 @@ class TaskModel {
       'title': title,
       'description': description,
       'date': date.toIso8601String(),
-      'time': time.toIso8601String(),
+      'time': time,
       'priority': priority,
       'category': category,
       'status': status,
