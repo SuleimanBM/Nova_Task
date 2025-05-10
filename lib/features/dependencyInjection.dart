@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:nova_task/features/tasks/data/models/taskModel.dart';
 import 'package:nova_task/features/tasks/domain/useCases/getFilteredTaskUsecase.dart';
 import 'package:nova_task/features/tasks/domain/useCases/getTasksStatisticsUseCase.dart';
+import 'package:nova_task/features/tasks/presentation/widgets/taskCard.dart';
 
 import './tasks/data/dataSources/remoteTaskDataSource.dart';
 import './tasks/domain/repositories/taskRepository.dart';
@@ -14,7 +16,7 @@ final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
   try {
-     // 1. External dependencies
+    // 1. External dependencies
     sl.registerLazySingleton<http.Client>(() =>
         http.Client()); // HTTP client :contentReference[oaicite:11]{index=11}
 
@@ -45,17 +47,16 @@ Future<void> initDependencies() async {
       () => GetFilteredTaskUsecase(
           sl()), // Inject repository :contentReference[oaicite:14]{index=14}
     );
-       sl.registerLazySingleton<GetTasksStatisticsUsecase>(
+    sl.registerLazySingleton<GetTasksStatisticsUsecase>(
       () => GetTasksStatisticsUsecase(sl()),
     );
 
     sl.registerFactory<TaskBloc>(
       // Register Bloc
-      () => TaskBloc(
-          sl<GetAllTasksUsecase>(), sl<GetFilteredTaskUsecase>(), sl<GetTasksStatisticsUsecase>()), // Inject use case :contentReference[oaicite:15]{index=15}
+      () => TaskBloc(sl<GetAllTasksUsecase>(), sl<GetFilteredTaskUsecase>(),
+          sl<GetTasksStatisticsUsecase>()), // Inject use case :contentReference[oaicite:15]{index=15}
     );
   } catch (e) {
     throw Exception('DI initialization failed: $e');
   }
- 
 }

@@ -1,6 +1,7 @@
 /// lib/presentation/blocs/task_bloc.dart
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nova_task/features/tasks/domain/entities/task.dart';
 import '../../domain/useCases/getTasksStatisticsUseCase.dart';
 import './taskEvents.dart';
 import './taskState.dart';
@@ -22,36 +23,42 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   // 2. Handler method
-  Future<void> _onLoadTasks(
-    LoadTasks event,
-    Emitter<TaskState> emit,
-  ) async {
-    emit(TaskLoading());
-    try {
-      print("Fetching task from backend");
-      final tasks = await _getTasksUseCase.execute();
-      final tasksStatistics = await _getTasksStatisticsUseCase.execute();
-      print('Fetched tasks: ${tasks}');
-      print(tasksStatistics);
-      emit(TaskLoaded(tasks, tasksStatistics as TaskStatistics?));
-    } catch (e) {
-      emit(TaskError(e.toString()));
-    }
+Future<void> _onLoadTasks(
+  LoadTasks event,
+  Emitter<TaskState> emit,
+) async {
+  emit(TaskLoading());
+
+  List<Task> tasks = [];
+  TaskStatistics? statistics;
+  String? error;
+
+  // Try fetching tasks
+  try {
+    print("Fetching tasks from backend");
+    tasks = await _getTasksUseCase.execute();
+    print('Fetched tasks: $tasks');
+  } catch (e) {
+    error = "Failed to load tasks: $e";
   }
 
-  // Future<void> _onFilterTasks(
-  //   FilterTasks event,
-  //   Emitter<TaskState> emit,
-  // ) async {
-  //   emit(TaskLoading());
-  //   try {
-  //     final tasks = await _getFilteredTasksUseCase.execute(event.filter);
-  //     print('Fetched tasks: ${tasks.length}');
-  //     emit(TaskLoaded(tasks));
-  //   } catch (e) {
-  //     emit(TaskError(e.toString()));
-  //   }
-  // }
+  // Try fetching task statistics
+  try {
+    statistics = (await _getTasksStatisticsUseCase.execute()) as TaskStatistics?;
+    print('Fetched statistics: $statistics');
+  } catch (e) {
+    error = (error != null ? "$error\n" : "") + "Failed to load statistics: $e";
+  }
+
+  // Emit the result
+  if (tasks.isNotEmpty || statistics != null) {
+    emit(TaskLoaded(tasks, statistics));
+  } else {
+    emit(TaskError(error ?? "Unknown error occurred."));
+  }
+}
+
+
 
   Future<void> _onFilterTasks(
       FilterTasks event, Emitter<TaskState> emit) async {

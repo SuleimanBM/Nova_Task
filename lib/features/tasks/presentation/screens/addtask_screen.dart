@@ -1,26 +1,71 @@
+import "dart:ffi";
+
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:nova_task/features/tasks/domain/entities/task.dart";
 
 class AddtaskScreen extends StatefulWidget {
-  AddtaskScreen({super.key});
+  final Task? task;
+  final String pageName;
+
+  AddtaskScreen({super.key, required this.task, required this.pageName});
 
   @override
   State<AddtaskScreen> createState() => _AddtaskScreenState();
 }
 
 class _AddtaskScreenState extends State<AddtaskScreen> {
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _priorityController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _priorityController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
+  TextEditingController _timeController = TextEditingController();
+  TextEditingController _subtaskController = TextEditingController();
+
+  late bool readOnly;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialiseFields();
+  }
+
+  void _initialiseFields() {
+    if (widget.pageName == "Edit Task") {
+      readOnly = true;
+      final DateTime date = widget.task!.date;
+      _titleController.text = widget.task!.title;
+      _descriptionController.text = widget.task!.description;
+      _dateController.text = DateFormat('MMM dd, yyyy').format(date).toString();
+      _priorityController.text = widget.task!.priority;
+      _categoryController.text = widget.task!.category;
+      _timeController.text = widget.task!.time;
+      _subtaskController.text = widget.task!.subtasks;
+    } else {
+      readOnly = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 245, 245, 245),
         appBar: AppBar(
-          title: const Text("Add Task"),
-          actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.edit_note_rounded, size: 32,))],
+          title: Text(widget.pageName),
+          actions: [
+            IconButton(
+              
+                onPressed: () {
+                  setState(() {
+                    readOnly = !readOnly;
+                  });
+                },
+                icon: const Icon(
+                  Icons.edit_note_rounded,
+                  size: 32,
+                ))
+          ],
         ),
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -29,19 +74,23 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
               padding: const EdgeInsets.only(top: 32),
               child: Column(
                 children: [
-                  const TextField(
+                  TextField(
+                    controller: _titleController,
+                    readOnly: readOnly,
                     maxLength: 250,
                     cursorWidth: 1,
                     maxLines: null,
                     minLines: 2,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Title',
                         fillColor: Color.fromARGB(255, 255, 255, 255),
                         filled: true),
                   ),
                   const SizedBox(height: 16),
-                  const TextField(
+                  TextField(
+                    controller: _descriptionController,
+                    readOnly: readOnly,
                     maxLength: 500,
                     cursorWidth: 1,
                     maxLines: null,
@@ -55,7 +104,7 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: _priorityController,
-                    readOnly: true,
+                    readOnly: readOnly,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       labelText: 'Priority',
@@ -123,7 +172,7 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: _dateController,
-                    readOnly: true,
+                    readOnly: readOnly,
                     onTap: () async {
                       final DateTime? pickedDate = await showDatePicker(
                           context: context,
@@ -150,7 +199,7 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: _timeController,
-                    readOnly: true,
+                    readOnly: readOnly,
                     onTap: () async {
                       final TimeOfDay? pickedTime = await showTimePicker(
                         context: context,
@@ -171,12 +220,14 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const TextField(
+                  TextField(
+                      controller: _subtaskController,
+                      readOnly: readOnly,
                       maxLength: 250,
                       cursorWidth: 1,
                       maxLines: null,
                       minLines: 2,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Subtasks',
                         fillColor: Color.fromARGB(255, 255, 255, 255),
@@ -193,7 +244,8 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                             backgroundColor: WidgetStatePropertyAll<Color>(
                                 Color.fromARGB(255, 48, 48, 48)),
                             padding: WidgetStatePropertyAll(
-                              EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+                              EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 32),
                             )),
                         child: Text(
                           "Delete Task",

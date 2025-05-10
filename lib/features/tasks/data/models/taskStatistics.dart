@@ -11,9 +11,9 @@ class TaskStatistics {
 
   factory TaskStatistics.fromJson(Map<String, dynamic> json) {
     return TaskStatistics(
-      completed: json['completed'],
-      pending: json['pending'],
-      overdue: json['overdue'],
+      completed: json['completed'] ?? 0,
+      pending: json['pending'] ?? 0,
+      overdue: json['overdue'] ?? 0,
     );
   }
 }

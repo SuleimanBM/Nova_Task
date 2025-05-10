@@ -27,18 +27,21 @@ class TaskModel {
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
-      id: json['_id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      date: DateTime.parse(json['dueDate'] as String),
-      time: json['time'] as String,
-      priority: json['priority'] as String,
-      category: json['category'] as String,
-      status: json['status'] as String,
-      subtasks: json['subtasks'] as String,
-      isCompleted: json['isCompleted'] as bool,
+      id: json['_id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      date: json['dueDate'] != null
+          ? DateTime.parse(json['dueDate'])
+          : DateTime.now(), // fallback if null
+      time: json['time'] ?? '', // this might be missing in your API
+      priority: json['priority'] ?? '',
+      category: json['category'] ?? '',
+      status: json['status'] ?? '',
+      subtasks: json['subtasks'] ?? '',
+      isCompleted: json['isCompleted'] ?? false,
     );
   }
+
 
   Map<String, dynamic> toJson() {
     return {

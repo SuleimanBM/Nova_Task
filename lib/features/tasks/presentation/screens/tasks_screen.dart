@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:nova_task/features/tasks/presentation/screens/addtask_screen.dart";
 import 'package:nova_task/features/tasks/presentation/widgets/taskCard.dart';
 import "../bloc/taskBloc.dart";
 import "../bloc/taskEvents.dart";
@@ -63,7 +64,13 @@ Widget build(BuildContext context) {
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
           actions: [
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddtaskScreen(
+                                task: null, pageName: "Add Task")));
+                },
                 icon: const Icon(
                   Icons.add,
                   size: 32,
@@ -140,11 +147,7 @@ Widget build(BuildContext context) {
                     itemCount: state.tasks.length,
                     itemBuilder: (context, index) {
                       return TaskCard(
-                        id: state.tasks[index].id,
-                        title: state.tasks[index].title,
-                        description: state.tasks[index].description,
-                        date: state.tasks[index].date,
-                        priority: state.tasks[index].priority,
+                      task: state.tasks[index],
                       );
                     },
                   ),

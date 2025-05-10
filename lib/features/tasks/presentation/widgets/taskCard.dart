@@ -1,35 +1,46 @@
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:nova_task/features/tasks/domain/entities/task.dart";
 import "package:nova_task/features/tasks/presentation/screens/addtask_screen.dart";
 
 class TaskCard extends StatefulWidget {
-  final String id;
-  final String title;
-  final DateTime date;
-  final String priority;
-  final String description;
+  // final String id;
+  // final String title;
+  // final DateTime date;
+  // final String priority;
+  // final String description;
 
-  const TaskCard({
-    super.key,
-    required this.id,
-    required this.date,
-    required this.priority,
-    required this.title,
-    required this.description,
-  });
+  // const TaskCard({
+  //   super.key,
+  //   required this.id,
+  //   required this.date,
+  //   required this.priority,
+  //   required this.title,
+  //   required this.description,
+  // });
+  final Task task;
+
+  const TaskCard({super.key, required this.task});
 
   @override
   State<TaskCard> createState() => _TaskCardState();
 }
 
+
 class _TaskCardState extends State<TaskCard> {
   bool _isChecked = false;
+  
   @override
   Widget build(BuildContext context) {
+    final String title = widget.task.title;
+    final String description = widget.task.description;
+    final String priority = widget.task.priority;
+    final bool isCompleted = widget.task.isCompleted;
+    final DateTime date = widget.task.date;
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AddtaskScreen()));
+            context, MaterialPageRoute(builder: (context) => AddtaskScreen(task: widget.task, pageName: "Edit Task")));
       },
       child: Container(
         padding: const EdgeInsets.all(8),
@@ -47,7 +58,7 @@ class _TaskCardState extends State<TaskCard> {
               children: [
                 Expanded(
                   child: Text(
-                    widget.title,
+                    title,
                     textWidthBasis: TextWidthBasis.parent,
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,
@@ -72,7 +83,7 @@ class _TaskCardState extends State<TaskCard> {
             ),
             const SizedBox(height: 8),
             Text(
-              widget.description,
+              description,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
               style: TextStyle(
@@ -84,12 +95,12 @@ class _TaskCardState extends State<TaskCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildPriorityIndicator(widget.priority),
+                _buildPriorityIndicator(priority),
                 Row(
                   children: [
                     const Icon(Icons.calendar_month),
                     const SizedBox(width: 4),
-                    Text(_formatDate(widget.date)),
+                    Text(_formatDate(date)),
                   ],
                 )
               ],
