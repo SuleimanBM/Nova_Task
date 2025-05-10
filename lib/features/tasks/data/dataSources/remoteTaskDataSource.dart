@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:nova_task/features/tasks/data/models/taskStatistics.dart';
+import 'package:nova_task/features/tasks/domain/entities/task.dart';
 import '../models/taskModel.dart';
 
 class RemoteTaskDataSource {
@@ -21,8 +22,8 @@ class RemoteTaskDataSource {
       if (res.statusCode != 200) {
         throw Exception('Failed to load tasks');
       }
-     print("📦 Raw response body: ${res.body}");
-  if (res.body.isEmpty) {
+      print("📦 Raw response body: ${res.body}");
+      if (res.body.isEmpty) {
         throw Exception("Response body is empty");
       }
       //final List<dynamic> data = json.decode(res.body)['tasks'] as List<dynamic>;
@@ -90,5 +91,33 @@ class RemoteTaskDataSource {
     return tasksJson
         .map((jsonMap) => TaskModel.fromJson(jsonMap as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<Object> addTask(Task task) async {
+    final url = Uri.parse('http://172.20.80.1:8000/todo/tasks');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json',
+      'Authorization':
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFhMzBlYzA2OWM3NTk3ZmI3Y2ZjN2QiLCJpYXQiOjE3NDY3MzE5MzUsImV4cCI6MTc0NzMzNjczNX0.BsLu-oHhE0sD0doagAq8cy7r8ZJolAw-lM-S7LSHvGo'
+      },
+      body: jsonEncode({
+        'title': task.title,
+        'description': task.description,
+        'dueDate': task.date.toIso8601String(),
+        'time': task.time,
+        'priority': task.priority,
+        'status': "Pending",
+        'category': task.category,
+        'subtasks': task.subtasks,
+        'isCompleted': task.isCompleted,
+      }),
+    );
+
+    if (response.statusCode != 201 && response.statusCode != 200) {
+      throw Exception('Failed to add task: ${response.body}');
+    }
+    return json.decode(response.body);
   }
 }

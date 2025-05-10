@@ -1,10 +1,10 @@
 import 'package:nova_task/features/tasks/domain/entities/task.dart';
 import 'package:nova_task/features/tasks/domain/repositories/taskRepository.dart';
 
-class GetTasksStatisticsUseCase {
+class AddTaskUseCase {
   final TaskRepository repository;
 
-  GetTasksStatisticsUseCase(this.repository);
+  AddTaskUseCase(this.repository);
 
-  Future<Object> execute() => repository.getTasksStatistics();
+  Future<Object> execute(Task task) => repository.addTask(task);
 }

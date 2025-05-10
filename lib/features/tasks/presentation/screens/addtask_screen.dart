@@ -1,8 +1,12 @@
 import "dart:ffi";
 
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:intl/intl.dart";
 import "package:nova_task/features/tasks/domain/entities/task.dart";
+import '../bloc/taskBloc.dart';
+import '../bloc/taskEvents.dart';
+import '../bloc/taskState.dart';
 
 class AddtaskScreen extends StatefulWidget {
   final Task? task;
@@ -47,15 +51,70 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
     }
   }
 
+  void _handleTaskEdit(BuildContext context) {
+    // Validate required fields
+    if (_titleController.text.trim().isEmpty ||
+        _descriptionController.text.trim().isEmpty ||
+        _dateController.text.trim().isEmpty ||
+        _timeController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all required fields')),
+      );
+      return;
+    }
+
+    try {
+      final DateTime parsedDate = DateTime.parse(_dateController.text.trim());
+
+      final Task newTask = Task(
+        id: DateTime.now().millisecondsSinceEpoch.toString(), // Unique ID
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        date: parsedDate,
+        time: _timeController.text.trim(),
+        priority: _priorityController.text.trim(),
+        category: _categoryController.text.trim(),
+        subtasks: _subtaskController.text.trim(),
+        isCompleted: false,
+      );
+
+      // Dispatch AddTask event
+      context.read<TaskBloc>().add(AddTask(newTask));
+
+      // Optionally clear form
+      _titleController.clear();
+      _descriptionController.clear();
+      _dateController.clear();
+      _timeController.clear();
+      _priorityController.clear();
+      _categoryController.clear();
+      _subtaskController.clear();
+
+      // Give feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Task added successfully')),
+      );
+
+      // Optionally navigate back
+      Navigator.of(context).pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid date format: ${_dateController.text}')),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+        return BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
+
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 245, 245, 245),
         appBar: AppBar(
           title: Text(widget.pageName),
           actions: [
             IconButton(
-              
                 onPressed: () {
                   setState(() {
                     readOnly = !readOnly;
@@ -237,8 +296,8 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                   // ignore: prefer_const_constructors
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      TextButton(
+                    children: [
+                      const TextButton(
                         onPressed: null,
                         style: ButtonStyle(
                             backgroundColor: WidgetStatePropertyAll<Color>(
@@ -253,14 +312,14 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: null,
-                        style: ButtonStyle(
+                        onPressed: () => _handleTaskEdit(context),
+                        style: const ButtonStyle(
                             backgroundColor: WidgetStatePropertyAll<Color>(
                                 Color.fromARGB(255, 48, 48, 48)),
                             padding: WidgetStatePropertyAll(
                               EdgeInsets.symmetric(vertical: 8, horizontal: 32),
                             )),
-                        child: Text(
+                        child: const Text(
                           "Save Task",
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
@@ -272,5 +331,5 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
             )
           ],
         ));
-  }
+        });}
 }

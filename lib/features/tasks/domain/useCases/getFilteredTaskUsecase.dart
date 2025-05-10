@@ -1,10 +1,10 @@
 import 'package:nova_task/features/tasks/domain/entities/task.dart';
 import 'package:nova_task/features/tasks/domain/repositories/taskRepository.dart';
 
-class GetFilteredTaskUsecase {
+class GetFilteredTasksUseCase {
   final TaskRepository repository;
 
-  GetFilteredTaskUsecase(this.repository);
+  GetFilteredTasksUseCase(this.repository);
 
   Future<List<Task>> execute({
     String? status,

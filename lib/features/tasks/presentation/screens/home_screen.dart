@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nova_task/features/tasks/presentation/screens/addtask_screen.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/statistics.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/todaysTask.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/upcomingList.dart';
@@ -66,7 +67,18 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
             actions: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BlocProvider.value(
+                          value: context.read<TaskBloc>(),
+                          child:
+                              AddtaskScreen(task: null, pageName: "Add Task"),
+                        ),
+                      ),
+                    );
+                  },
                   icon: const Icon(
                     Icons.add,
                     size: 32,
@@ -80,7 +92,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(
                 height: 24,
               ),
-              const TodaysTask(),
+              TodaysTask(task: state.tasks),
               const SizedBox(
                 height: 24,
               ),
@@ -106,18 +118,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: 16,
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: upcomingItems.length,
-                    itemBuilder: (context, index) {
-                      return UpcomingList(
-                        title: upcomingItems[index]['title'],
-                        date: upcomingItems[index]['date'],
-                        priority: upcomingItems[index]['priority'],
-                      );
-                    },
-                  )
+                  UpcomingList(tasks: state.tasks)
                 ],
               )
             ],

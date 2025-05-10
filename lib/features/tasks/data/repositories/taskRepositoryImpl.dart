@@ -10,9 +10,9 @@ class TaskRepositoryImpl implements TaskRepository {
 
   @override
   Future<List<Task>> getTasks() async {
-     print("💡 Repository: calling remote.getTasks()");
+    print("💡 Repository: calling remote.getTasks()");
     final List<TaskModel> models = await remote.getTasks();
-print("💡 Repository: remote returned ${models.length} models");
+    print("💡 Repository: remote returned ${models.length} models");
     return models
         .map((model) => Task(
               id: model.id,
@@ -43,8 +43,9 @@ print("💡 Repository: remote returned ${models.length} models");
       date: date,
     );
 
-    return models.map((model) => Task(
-      id: model.id,
+    return models
+        .map((model) => Task(
+              id: model.id,
               title: model.title,
               description: model.description,
               date: model.date,
@@ -53,12 +54,17 @@ print("💡 Repository: remote returned ${models.length} models");
               category: model.category,
               subtasks: model.subtasks,
               isCompleted: model.isCompleted,
-    )).toList();
+            ))
+        .toList();
   }
 
   Future<Object> getTasksStatistics() async {
     final response = await remote.getTasksStatistics();
     return response;
   }
-}
 
+  Future<Object> addTask(Task task) async {
+    final Object response = await remote.addTask(task);
+    return response;
+  }
+}

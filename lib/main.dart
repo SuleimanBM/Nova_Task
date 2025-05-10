@@ -10,7 +10,7 @@ import 'package:get_it/get_it.dart';
 import "package:nova_task/features/dependencyInjection.dart" as di;
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized;
+  WidgetsFlutterBinding.ensureInitialized();
   await di.initDependencies();
   runApp(const MyApp());
 }
@@ -18,20 +18,23 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return BlocProvider(
+      create: (context) => sl<TaskBloc>()..add(LoadTasks()),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: const MyHomePage(),
       ),
-      debugShowCheckedModeBanner: false,
-      home: const MyHomePage(),
     );
   }
 }
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -73,15 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       body: SafeArea(
-        child: BlocProvider(
-          create: (context) => sl<TaskBloc>()..add(LoadTasks()),
-          child: [
-            HomeScreen(),
-            TasksScreen(),
-            CategoriesScreen()
-          ][currentPageIndex],
-        ),
+        child: [
+          HomeScreen(),
+          TasksScreen(),
+          CategoriesScreen()
+        ][currentPageIndex],
       ),
+
     );
   }
 }

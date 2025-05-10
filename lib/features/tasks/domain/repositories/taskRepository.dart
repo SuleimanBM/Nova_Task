@@ -13,7 +13,7 @@ abstract class TaskRepository {
 
   Future<Object> getTasksStatistics();
 
-  // Future<void> addTask(Task task);
+  Future<Object> addTask(Task task);
 
   // Future<void> deleteTask(Task task);
 
