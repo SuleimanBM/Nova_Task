@@ -56,7 +56,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     // Emit the result
     if (tasks.isNotEmpty || statistics != null) {
-      emit(TaskLoaded(tasks, statistics));
+      emit(TaskLoaded(tasks, statistics!));
     } else {
       emit(TaskError(error ?? "Unknown error occurred."));
     }
@@ -74,7 +74,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         date: event.date,
         // You might need to handle date ranges or other complex filters
       );
-      emit(TaskLoaded(filteredTasks));
+       final statistics =
+          await _getTasksStatisticsUseCase.execute() as TaskStatistics;
+      emit(TaskLoaded(filteredTasks, statistics));
     } catch (e) {
       emit(TaskError(e.toString()));
     }
@@ -89,8 +91,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
       // Optionally, you can reload all tasks after adding (if needed)
       final allTasks = await _getAllTasksUseCase.execute();
+      final statistics =
+          await _getTasksStatisticsUseCase.execute() as TaskStatistics;
       if(allTasks.isNotEmpty){
-        emit(TaskLoaded(allTasks));
+        emit(TaskLoaded(allTasks, statistics));
       }
        // Emit updated task list
     } catch (e) {

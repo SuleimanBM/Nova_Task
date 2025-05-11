@@ -64,13 +64,17 @@ Widget build(BuildContext context) {
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
           actions: [
             IconButton(
-                onPressed: () {
-                  Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddtaskScreen(
-                                task: null, pageName: "Add Task")));
-                },
+                onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AddtaskScreen(task: null, pageName: "Add Task"),
+                      ),
+                    );
+                    // Refresh data after returning
+                    BlocProvider.of<TaskBloc>(context).add(LoadTasks());
+                  },
                 icon: const Icon(
                   Icons.add,
                   size: 32,

@@ -11,8 +11,8 @@ class TaskLoading extends TaskState {}
 
 class TaskLoaded extends TaskState {
   final List<Task> tasks;
-  final TaskStatistics? tasksStatistics;
-  TaskLoaded(this.tasks, [this.tasksStatistics]);
+  final TaskStatistics tasksStatistics;
+  TaskLoaded(this.tasks, this.tasksStatistics);
   @override
   List<Object?> get props => [tasksStatistics, tasks];
 }

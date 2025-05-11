@@ -12,18 +12,22 @@ import "package:nova_task/features/dependencyInjection.dart" as di;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.initDependencies();
-  runApp(const MyApp());
+  final taskBloc = sl<TaskBloc>()..add(LoadTasks());
+  runApp(MyApp(taskBloc: taskBloc));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final TaskBloc taskBloc;
+
+  const MyApp({super.key, required this.taskBloc});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<TaskBloc>()..add(LoadTasks()),
+      //value: taskBloc,
+     create: (context) => sl<TaskBloc>()..add(LoadTasks()),
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Nova Task',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,

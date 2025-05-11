@@ -51,8 +51,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
-      print('Current State: $state');
+     return BlocConsumer<TaskBloc, TaskState>(listener: (context, state) {
+      if (state is TaskError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message)),
+        );
+      }
+    }, builder: (context, state) {
+      final bloc = BlocProvider.of<TaskBloc>(context);
+      if (bloc == null) {
+        return const Center(child: Text('Bloc not available'));
+      }
       if (state is TaskLoading) {
         return const Center(child: CircularProgressIndicator());
       } else if (state is TaskLoaded) {
@@ -68,14 +77,11 @@ class HomeScreen extends StatelessWidget {
             actions: [
               IconButton(
                   onPressed: () {
-                    Navigator.push(
+                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BlocProvider.value(
-                          value: context.read<TaskBloc>(),
-                          child:
-                              AddtaskScreen(task: null, pageName: "Add Task"),
-                        ),
+                        builder: (context) =>
+                            AddtaskScreen(task: null, pageName: "Add Task"),
                       ),
                     );
                   },
