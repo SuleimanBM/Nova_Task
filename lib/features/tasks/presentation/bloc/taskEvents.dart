@@ -45,5 +45,5 @@ class DeleteTask extends TaskEvent {
   final String taskId;
   DeleteTask(this.taskId);
   @override
-  List<Object?> get props => [taskId];
+  List<Object> get props => [taskId];
 }

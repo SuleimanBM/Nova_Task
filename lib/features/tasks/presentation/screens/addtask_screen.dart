@@ -104,6 +104,35 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
     }
   }
 
+  void _deleteTask(BuildContext context) {
+     context.read<TaskBloc>().add(DeleteTask(widget.task!.id));
+  }
+
+void _confirmDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete Task'),
+        content: const Text('Are you sure you want to delete this task?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              
+              _deleteTask(context);
+              Navigator.of(context).pop();
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
@@ -303,16 +332,16 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const TextButton(
-                          onPressed: null,
-                          style: ButtonStyle(
+                        TextButton(
+                          onPressed: () => _confirmDelete(context),
+                          style: const ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll<Color>(
                                   Color.fromARGB(255, 48, 48, 48)),
                               padding: WidgetStatePropertyAll(
                                 EdgeInsets.symmetric(
                                     vertical: 12, horizontal: 32),
                               )),
-                          child: Text(
+                          child: const Text(
                             "Delete Task",
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),

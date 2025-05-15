@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:nova_task/features/tasks/data/models/taskModel.dart';
 import 'package:nova_task/features/tasks/domain/useCases/addTaskUseCase.dart';
+import 'package:nova_task/features/tasks/domain/useCases/deleteTaskUseCase.dart';
 import 'package:nova_task/features/tasks/domain/useCases/getFilteredTaskUsecase.dart';
 import 'package:nova_task/features/tasks/domain/useCases/getTasksStatisticsUseCase.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/taskCard.dart';
@@ -53,13 +54,16 @@ Future<void> initDependencies() async {
     );
     sl.registerLazySingleton<AddTaskUseCase>(() => AddTaskUseCase(sl()));
 
+    sl.registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase(sl()));
+
     sl.registerFactory<TaskBloc>(
       // Register Bloc
       () => TaskBloc(
           sl<GetAllTasksUseCase>(),
           sl<GetFilteredTasksUseCase>(),
           sl<GetTasksStatisticsUseCase>(),
-          sl<AddTaskUseCase>()), // Inject use case :contentReference[oaicite:15]{index=15}
+          sl<AddTaskUseCase>(),
+          sl<DeleteTaskUseCase>()), // Inject use case :contentReference[oaicite:15]{index=15}
     );
   } catch (e) {
     throw Exception('DI initialization failed: $e');

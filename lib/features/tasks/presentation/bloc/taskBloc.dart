@@ -3,6 +3,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nova_task/features/tasks/domain/entities/task.dart';
 import 'package:nova_task/features/tasks/domain/useCases/addTaskUseCase.dart';
+import 'package:nova_task/features/tasks/domain/useCases/deleteTaskUseCase.dart';
 import '../../domain/useCases/getTasksStatisticsUseCase.dart';
 import './taskEvents.dart';
 import './taskState.dart';
@@ -15,13 +16,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final GetFilteredTasksUseCase _getFilteredTasksUseCase;
   final GetTasksStatisticsUseCase _getTasksStatisticsUseCase;
   final AddTaskUseCase _addTaskUseCase;
+  final DeleteTaskUseCase _deleteTaskUseCase;
   TaskBloc(this._getAllTasksUseCase, this._getFilteredTasksUseCase,
-      this._getTasksStatisticsUseCase, this._addTaskUseCase)
+      this._getTasksStatisticsUseCase, this._addTaskUseCase, this._deleteTaskUseCase)
       : super(TaskLoading()) {
     // 1. Register handler for LoadTasksEvent
     on<LoadTasks>(_onLoadTasks);
     on<FilterTasks>(_onFilterTasks);
     on<AddTask>(_onAddTask);
+    on<DeleteTask>(_onDelteTask);
   }
 
   // 2. Handler method
@@ -74,7 +77,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         date: event.date,
         // You might need to handle date ranges or other complex filters
       );
-       final statistics =
+      final statistics =
           await _getTasksStatisticsUseCase.execute() as TaskStatistics;
       emit(TaskLoaded(filteredTasks, statistics));
     } catch (e) {
@@ -90,15 +93,30 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       await _addTaskUseCase.execute(event.task);
 
       // Optionally, you can reload all tasks after adding (if needed)
-      final allTasks = await _getAllTasksUseCase.execute();
+      final tasks = await _getAllTasksUseCase.execute();
       final statistics =
           await _getTasksStatisticsUseCase.execute() as TaskStatistics;
-      if(allTasks.isNotEmpty){
-        emit(TaskLoaded(allTasks, statistics));
+      if (tasks.isNotEmpty) {
+        emit(TaskLoaded(tasks, statistics));
       }
-       // Emit updated task list
+      // Emit updated task list
     } catch (e) {
       emit(TaskError("Failed to add task: ${e.toString()}"));
+    }
+  }
+
+  Future<void> _onDelteTask(DeleteTask event, Emitter<TaskState> emit) async {
+    emit(TaskLoading());
+    try {
+      await _deleteTaskUseCase.execute(event.taskId);
+      final tasks = await _getAllTasksUseCase.execute();
+      final statistics =
+          await _getTasksStatisticsUseCase.execute() as TaskStatistics;
+      if (tasks.isNotEmpty) {
+        emit(TaskLoaded(tasks, statistics));
+      }
+    } catch (e) {
+      emit(TaskError('Failed to delete task'));
     }
   }
 }

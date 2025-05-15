@@ -4,56 +4,54 @@ import 'package:nova_task/features/tasks/data/models/taskStatistics.dart';
 import 'package:nova_task/features/tasks/domain/entities/task.dart';
 import '../models/taskModel.dart';
 
+
 class RemoteTaskDataSource {
   final http.Client client;
   RemoteTaskDataSource(this.client);
 
+  static const String _baseUrl = 'https://novatask-server.onrender.com';
+  static const String _localUrl =
+      'http://172.20.80.1:8000'; // Used only for `addTask`
+
+  static const String _token =
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFhMzBlYzA2OWM3NTk3ZmI3Y2ZjN2QiLCJpYXQiOjE3NDczNDE0NDksImV4cCI6MTc0Nzk0NjI0OX0.7RK-qKq0mCroREAAFZvApr8jnlrZXje2Oea_kuXluvE';
+
+  Map<String, String> get _headers => {
+        'Authorization': _token,
+        'Content-Type': 'application/json',
+      };
+
   Future<List<TaskModel>> getTasks() async {
     try {
-      print("💡 RemoteDataSource: starting fetch");
-      final res = await client.get(
-        Uri.parse('http://172.20.80.1:8000/todo/tasks'),
-        headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFhMzBlYzA2OWM3NTk3ZmI3Y2ZjN2QiLCJpYXQiOjE3NDY3MzE5MzUsImV4cCI6MTc0NzMzNjczNX0.BsLu-oHhE0sD0doagAq8cy7r8ZJolAw-lM-S7LSHvGo'
-        },
-      );
-      print("💡 RemoteDataSource: got HTTP ${res.statusCode}");
+      final res = await client.get(Uri.parse('$_baseUrl/todo/tasks'),
+          headers: _headers);
       if (res.statusCode != 200) {
-        throw Exception('Failed to load tasks');
+        throw Exception('Failed to load tasks: ${res.statusCode}');
       }
-      print("📦 Raw response body: ${res.body}");
-      if (res.body.isEmpty) {
-        throw Exception("Response body is empty");
-      }
-      //final List<dynamic> data = json.decode(res.body)['tasks'] as List<dynamic>;
-      final Map<String, dynamic> jsonBody = json.decode(res.body);
+
+      final jsonBody = json.decode(res.body);
       final List<dynamic> tasksJson = jsonBody['tasks'];
-      return tasksJson
-          .map((jsonMap) => TaskModel.fromJson(jsonMap as Map<String, dynamic>))
-          .toList();
+      return tasksJson.map((json) => TaskModel.fromJson(json)).toList();
     } catch (e) {
-      print("error from getting all tasks:$e");
-      throw Exception('Failed to load tasks');
+      print("❌ Error getting tasks: $e");
+      rethrow;
     }
   }
 
-  Future<Object> getTasksStatistics() async {
-    print("getting tasks statistics");
-    final res = await client.get(
-      Uri.parse('http://172.20.80.1:8000/todo/tasks-statistics'),
-      headers: {
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFhMzBlYzA2OWM3NTk3ZmI3Y2ZjN2QiLCJpYXQiOjE3NDY3MzE5MzUsImV4cCI6MTc0NzMzNjczNX0.BsLu-oHhE0sD0doagAq8cy7r8ZJolAw-lM-S7LSHvGo'
-      },
-    );
-    if (res.statusCode != 200) {
-      throw Exception('Failed to load tasks');
+  Future<TaskStatistics> getTasksStatistics() async {
+    try {
+      final res = await client.get(Uri.parse('$_baseUrl/todo/tasks-statistics'),
+          headers: _headers);
+      if (res.statusCode != 200) {
+        throw Exception('Failed to load task statistics: ${res.statusCode}');
+      }
+
+      final jsonBody = json.decode(res.body);
+      return TaskStatistics.fromJson(jsonBody['taskStats']);
+    } catch (e) {
+      print("❌ Error getting task statistics: $e");
+      rethrow;
     }
-    print("response from server $res");
-    final Map<String, dynamic> jsonBody = json.decode(res.body);
-    final taskStatisticsJson = jsonBody['taskStats'];
-    return TaskStatistics.fromJson(taskStatisticsJson);
   }
 
   Future<List<TaskModel>> getFilteredTasks({
@@ -61,12 +59,11 @@ class RemoteTaskDataSource {
     String? priority,
     String? category,
     bool? isCompleted,
-    DateTime? date,
     String? sortBy,
-    String? sortOrder = 'asc',
+    String? sortOrder = 'asc', DateTime? date,
   }) async {
-    final res = await client.get(
-      Uri.parse('http://172.20.80.1:8000/todo/tasks').replace(
+    try {
+      final uri = Uri.parse('$_baseUrl/todo/tasks').replace(
         queryParameters: {
           if (status != null) 'status': status,
           if (priority != null) 'priority': priority,
@@ -75,49 +72,66 @@ class RemoteTaskDataSource {
           if (sortBy != null) 'sortBy': sortBy,
           if (sortOrder != null) 'sortOrder': sortOrder,
         },
-      ),
-      headers: {
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFhMzBlYzA2OWM3NTk3ZmI3Y2ZjN2QiLCJpYXQiOjE3NDY3MzE5MzUsImV4cCI6MTc0NzMzNjczNX0.BsLu-oHhE0sD0doagAq8cy7r8ZJolAw-lM-S7LSHvGo'
-      },
-    );
-    if (res.statusCode != 200) {
-      throw Exception('Failed to load tasks');
+      );
+
+      final res = await client.get(uri, headers: _headers);
+      if (res.statusCode != 200) {
+        throw Exception('Failed to load filtered tasks: ${res.statusCode}');
+      }
+
+      final jsonBody = json.decode(res.body);
+      final List<dynamic> tasksJson = jsonBody['tasks'];
+      return tasksJson.map((json) => TaskModel.fromJson(json)).toList();
+    } catch (e) {
+      print("❌ Error filtering tasks: $e");
+      rethrow;
     }
-    print("response from server $res");
-    //final List<dynamic> data = json.decode(res.body)['tasks'] as List<dynamic>;
-    final Map<String, dynamic> jsonBody = json.decode(res.body);
-    final List<dynamic> tasksJson = jsonBody['tasks'];
-    return tasksJson
-        .map((jsonMap) => TaskModel.fromJson(jsonMap as Map<String, dynamic>))
-        .toList();
   }
 
-  Future<Object> addTask(Task task) async {
-    final url = Uri.parse('http://172.20.80.1:8000/todo/tasks');
+  Future<TaskModel> addTask(Task task) async {
+    try {
+      final uri = Uri.parse('$_baseUrl/todo/tasks');
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json',
-      'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFhMzBlYzA2OWM3NTk3ZmI3Y2ZjN2QiLCJpYXQiOjE3NDY3MzE5MzUsImV4cCI6MTc0NzMzNjczNX0.BsLu-oHhE0sD0doagAq8cy7r8ZJolAw-lM-S7LSHvGo'
-      },
-      body: jsonEncode({
-        'title': task.title,
-        'description': task.description,
-        'dueDate': task.date.toIso8601String(),
-        'time': task.time,
-        'priority': task.priority,
-        'status': "Pending",
-        'category': task.category,
-        'subtasks': task.subtasks,
-        'isCompleted': task.isCompleted,
-      }),
-    );
+      final response = await client.post(
+        uri,
+        headers: _headers,
+        body: jsonEncode({
+          'title': task.title,
+          'description': task.description,
+          'dueDate': task.date.toIso8601String(),
+          'time': task.time,
+          'priority': task.priority,
+          'status': "Pending",
+          'category': task.category,
+          'subtasks': task.subtasks,
+          'isCompleted': task.isCompleted,
+        }),
+      );
 
-    if (response.statusCode != 201 && response.statusCode != 200) {
-      throw Exception('Failed to add task: ${response.body}');
+      if (response.statusCode != 201 && response.statusCode != 200) {
+        throw Exception('Failed to add task: ${response.body}');
+      }
+
+      return TaskModel.fromJson(json.decode(response.body));
+    } catch (e) {
+      print("❌ Error adding task: $e");
+      rethrow;
     }
-    return json.decode(response.body);
+  }
+
+  Future<void> deleteTask(String taskId) async {
+    try {
+      final uri = Uri.parse('$_baseUrl/todo/tasks/$taskId');
+      final response = await client.delete(uri, headers: _headers);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete task: ${response.body}');
+      }
+
+      print('✅ Task deleted successfully');
+    } catch (e) {
+      print('❌ Error deleting task: $e');
+      rethrow;
+    }
   }
 }

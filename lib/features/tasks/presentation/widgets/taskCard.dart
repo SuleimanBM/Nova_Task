@@ -4,20 +4,7 @@ import "package:nova_task/features/tasks/domain/entities/task.dart";
 import "package:nova_task/features/tasks/presentation/screens/addtask_screen.dart";
 
 class TaskCard extends StatefulWidget {
-  // final String id;
-  // final String title;
-  // final DateTime date;
-  // final String priority;
-  // final String description;
 
-  // const TaskCard({
-  //   super.key,
-  //   required this.id,
-  //   required this.date,
-  //   required this.priority,
-  //   required this.title,
-  //   required this.description,
-  // });
   final Task task;
 
   const TaskCard({super.key, required this.task});
@@ -26,21 +13,35 @@ class TaskCard extends StatefulWidget {
   State<TaskCard> createState() => _TaskCardState();
 }
 
-
 class _TaskCardState extends State<TaskCard> {
-  bool _isChecked = false;
-  
+  late bool _isChecked;
+  late String _title;
+  late String _description;
+  late String _priority;
+  late DateTime _date;
+
+  @override
+  void initState() {
+    super.initState();
+    final task = widget.task;
+    _isChecked = task.isCompleted;
+    _title = task.title;
+    _description = task.description;
+    _priority = task.priority;
+    _date = task.date;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String title = widget.task.title;
-    final String description = widget.task.description;
-    final String priority = widget.task.priority;
-    final bool isCompleted = widget.task.isCompleted;
-    final DateTime date = widget.task.date;
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AddtaskScreen(task: widget.task, pageName: "Edit Task")));
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                AddtaskScreen(task: widget.task, pageName: "Edit Task"),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(8),
@@ -48,7 +49,6 @@ class _TaskCardState extends State<TaskCard> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
-          //border: Border.all(color: Colors.black, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,51 +58,49 @@ class _TaskCardState extends State<TaskCard> {
               children: [
                 Expanded(
                   child: Text(
-                    title,
+                    _title,
                     textWidthBasis: TextWidthBasis.parent,
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,
                     maxLines: 2,
                     style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 17, 16, 16)),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 17, 16, 16),
+                    ),
                   ),
                 ),
-                Column(
-                  children: [
-                    Checkbox(
-                      value: _isChecked,
-                      onChanged: (bool? newValue) {
-                        setState(() => _isChecked = newValue!);
-                      },
-                    ),
-                  ],
+                Checkbox(
+                  value: _isChecked,
+                  onChanged: (bool? newValue) {
+                    setState(() => _isChecked = newValue!);
+                  },
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
-              description,
+              _description,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Color.fromARGB(255, 17, 16, 16)),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: Color.fromARGB(255, 17, 16, 16),
+              ),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildPriorityIndicator(priority),
+                _buildPriorityIndicator(_priority),
                 Row(
                   children: [
                     const Icon(Icons.calendar_month),
                     const SizedBox(width: 4),
-                    Text(_formatDate(date)),
+                    Text(_formatDate(_date)),
                   ],
-                )
+                ),
               ],
             )
           ],
@@ -111,7 +109,7 @@ class _TaskCardState extends State<TaskCard> {
     );
   }
 
-  Widget _buildPriorityIndicator(priority) {
+  Widget _buildPriorityIndicator(String priority) {
     final (color, text) = switch (priority.toLowerCase()) {
       "high" => (const Color.fromARGB(255, 209, 47, 35), 'High'),
       "medium" => (const Color.fromARGB(255, 247, 188, 52), 'Medium'),

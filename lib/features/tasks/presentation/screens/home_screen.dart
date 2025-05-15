@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nova_task/features/tasks/presentation/screens/addtask_screen.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/statistics.dart';
+import 'package:nova_task/features/tasks/presentation/widgets/taskCard.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/todaysTask.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/upcomingList.dart';
 import "../bloc/taskBloc.dart";
@@ -11,47 +12,27 @@ import "../bloc/taskState.dart";
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final List<Map<String, dynamic>> upcomingItems = [
-    {
-      "title": "Grocery Shopping for the week",
-      "date": DateTime.now().add(const Duration(days: 1)),
-      "priority": "high",
-    },
-    {
-      "title": "Prepare project presentation",
-      "date": DateTime.now().add(const Duration(days: 3)),
-      "priority": "medium",
-    },
-    {
-      "title": "Team meeting",
-      "date": DateTime.now().add(const Duration(days: 5)),
-      "priority": 'low',
-    },
-    {
-      "title": "Make a doctor's appointment",
-      "date": DateTime.now().add(const Duration(days: 6)),
-      "priority": "high",
-    },
-    {
-      "title": "Buy a new pair of shoes",
-      "date": DateTime.now().add(const Duration(days: 9)),
-      "priority": "medium",
-    },
-    {
-      "title": "Finish the book",
-      "date": DateTime.now().add(const Duration(days: 10)),
-      "priority": "low",
-    },
-    {
-      "title": "Start a new project",
-      "date": DateTime.now().add(const Duration(days: 12)),
-      "priority": "high",
-    },
-  ];
+  List _getUpcomingTasks(tasks) {
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
+    final end = start.add(Duration(days: 2)); // 3 days total, excluding today
+
+    return tasks.where((t) {
+      final taskDate = t.date is String
+          ? DateTime.parse(t.date).toLocal()
+          : t.date.toLocal();
+
+      final taskDateOnly =
+          DateTime(taskDate.year, taskDate.month, taskDate.day);
+      print("Task date only $taskDateOnly");
+      return taskDateOnly.isAfter(start.subtract(const Duration(days: 1))) &&
+          taskDateOnly.isBefore(end.add(const Duration(days: 1)));
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-     return BlocConsumer<TaskBloc, TaskState>(listener: (context, state) {
+    return BlocConsumer<TaskBloc, TaskState>(listener: (context, state) {
       if (state is TaskError) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(state.message)),
@@ -68,6 +49,8 @@ class HomeScreen extends StatelessWidget {
         if (state.tasks.isEmpty) {
           return const Center(child: Text("Task is empty"));
         }
+        final upcomingTask = _getUpcomingTasks(state.tasks);
+
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 245),
           appBar: AppBar(
@@ -77,7 +60,7 @@ class HomeScreen extends StatelessWidget {
             actions: [
               IconButton(
                   onPressed: () {
-                   Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
@@ -124,7 +107,9 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: 16,
                   ),
-                  UpcomingList(tasks: state.tasks)
+                  Column(
+                    children: upcomingTask.map((task) => TaskCard(task: task)).toList(),
+                  )
                 ],
               )
             ],

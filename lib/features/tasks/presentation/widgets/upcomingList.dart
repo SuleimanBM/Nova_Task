@@ -17,26 +17,10 @@ class _UpcomingListState extends State<UpcomingList> {
   @override
   void initState() {
     super.initState();
-    upcomingTask = _getUpcomingTasks() as List<Task>;
+    //upcomingTask = _getUpcomingTasks() as List<Task>;
   }
 
-  List _getUpcomingTasks() {
-    final now = DateTime.now();
-    final start = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
-    final end = start.add(Duration(days: 2)); // 3 days total, excluding today
 
-    return widget.tasks.where((t) {
-      final taskDate = t.date is String
-          ? DateTime.parse(t.date).toLocal()
-          : t.date.toLocal();
-
-      final taskDateOnly =
-          DateTime(taskDate.year, taskDate.month, taskDate.day);
-      print("Task date only $taskDateOnly");
-      return taskDateOnly.isAfter(start.subtract(const Duration(days: 1))) &&
-          taskDateOnly.isBefore(end.add(const Duration(days: 1)));
-    }).toList();
-  }
 
   @override
   Widget build(BuildContext context) {
