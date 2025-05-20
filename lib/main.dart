@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nova_task/features/tasks/presentation/bloc/taskEvents.dart';
 import 'package:nova_task/features/tasks/presentation/screens/categories_screen.dart';
 import 'package:nova_task/features/tasks/presentation/screens/home_screen.dart';
@@ -8,40 +9,55 @@ import 'package:nova_task/features/dependencyInjection.dart';
 import 'package:nova_task/features/tasks/presentation/bloc/taskBloc.dart';
 import 'package:get_it/get_it.dart';
 import "package:nova_task/features/dependencyInjection.dart" as di;
+import 'package:nova_task/features/users/presentation/bloc/authBloc.dart';
+import 'package:nova_task/features/users/presentation/screens/loginScreen.dart';
+import 'package:nova_task/features/users/presentation/screens/signupScreen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.initDependencies();
-  final taskBloc = sl<TaskBloc>()..add(LoadTasks());
-  runApp(MyApp(taskBloc: taskBloc));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final TaskBloc taskBloc;
+  const MyApp({Key? key}) : super(key: key);
 
-  const MyApp({super.key, required this.taskBloc});
+  final bool isLoggedIn = false;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      //value: taskBloc,
-     create: (context) => sl<TaskBloc>()..add(LoadTasks()),
-      child: MaterialApp(
-        title: 'Nova Task',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: const MyHomePage(),
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<TaskBloc>(
+              create: (_) => di.sl<TaskBloc>()..add(LoadTasks()),
+            ),
+            BlocProvider<AuthBloc>(
+              create: (_) => di.sl<AuthBloc>(),
+            ),
+          ],
+          child: MaterialApp(
+            title: 'Nova Task',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            debugShowCheckedModeBanner: false,
+            home: isLoggedIn ? const MyHomePage() : const LoginScreen(),
+          ),
+        );
+      },
     );
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -54,21 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-      // appBar: AppBar(
-      //   title: const Text('NovaTask'),
-      // ),
       bottomNavigationBar: NavigationBar(
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home,size: 20.sp),
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.task),
+            icon: Icon(Icons.task, size: 20.sp),
             label: 'Tasks',
           ),
           NavigationDestination(
-            icon: Icon(Icons.category),
+            icon: Icon(Icons.category, size: 20.sp),
             label: 'Categories',
           ),
         ],
@@ -83,10 +96,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: [
           HomeScreen(),
           TasksScreen(),
-          CategoriesScreen()
+          const CategoriesScreen(),
         ][currentPageIndex],
       ),
-
     );
   }
 }
+

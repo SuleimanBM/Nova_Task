@@ -8,6 +8,8 @@ import 'package:nova_task/features/tasks/presentation/widgets/upcomingList.dart'
 import "../bloc/taskBloc.dart";
 import "../bloc/taskEvents.dart";
 import "../bloc/taskState.dart";
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -46,17 +48,17 @@ class HomeScreen extends StatelessWidget {
       if (state is TaskLoading) {
         return const Center(child: CircularProgressIndicator());
       } else if (state is TaskLoaded) {
-        if (state.tasks.isEmpty) {
-          return const Center(child: Text("Task is empty"));
-        }
+        // if (state.tasks.isEmpty) {
+        //   return const Center(child: Text("Task is empty"));
+        // }
         final upcomingTask = _getUpcomingTasks(state.tasks);
 
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 245),
           appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-            title: const Text('NovaTask',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+            title: Text('NovaTask',
+                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold)),
             actions: [
               IconButton(
                   onPressed: () {
@@ -68,55 +70,58 @@ class HomeScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.add,
-                    size: 32,
+                    size: 24.sp,
                   ))
             ],
             scrolledUnderElevation: 0.0,
           ),
           body: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             children: [
-              const SizedBox(
-                height: 24,
-              ),
+              24.verticalSpace,
               TodaysTask(task: state.tasks),
-              const SizedBox(
-                height: 24,
-              ),
+              24.verticalSpace,
               Statistics(
                 completed: state.tasksStatistics!.completed.toString(),
                 pending: state.tasksStatistics!.pending.toString(),
                 overdue: state.tasksStatistics!.overdue.toString(),
               ),
-              const SizedBox(
-                height: 24,
-              ),
+              24.verticalSpace,
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Upcoming",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 17, 16, 16),
                     ),
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
+                  16.verticalSpace,
                   Column(
-                    children: upcomingTask.map((task) => TaskCard(task: task)).toList(),
+                    children: (upcomingTask == null || upcomingTask.isEmpty)
+                        ? [
+                            Text(
+                              "No upcoming tasks",
+                              style:
+                                  TextStyle(fontSize: 16.sp, color: Colors.grey),
+                            ),
+                          ]
+                        : upcomingTask
+                            .map((task) => TaskCard(task: task))
+                            .toList(),
                   )
+
                 ],
               )
             ],
           ),
         );
       }
-      return const Center(child: Text("Unexpected state"));
+      return Center(child: Text("Unexpected state", style: TextStyle(fontSize: 16.sp)));
     });
   }
 }

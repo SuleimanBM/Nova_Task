@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryCard extends StatelessWidget {
   final double width;
@@ -15,14 +16,14 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 200.h,
       width: width,
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(8.sp),
       // ✅ Remove horizontal margin
-      margin: const EdgeInsets.only(top: 4, bottom: 4),
+      margin: EdgeInsets.only(top: 4.h, bottom: 4.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,16 +31,16 @@ class CategoryCard extends StatelessWidget {
         children: [
           Text(
             category,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 17, 16, 16),
             ),
           ),
           Text(
             count.toString(),
-            style: const TextStyle(
-              fontSize: 32,
+            style:  TextStyle(
+              fontSize: 32.sp,
               fontWeight: FontWeight.w400,
               color: Color.fromARGB(255, 17, 16, 16),
             ),

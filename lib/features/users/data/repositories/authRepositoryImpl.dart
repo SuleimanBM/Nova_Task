@@ -1,5 +1,4 @@
 // data/repositories/auth_repository_impl.dart
-import 'package:nova_task/features/users/data/dataSources/remoteUserDataSource.dart';
 
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/authRepository.dart';
@@ -11,12 +10,12 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<User> signUp(String name, String email, String password) {
+  Future<void> signUp(String name, String email, String password) {
     return remoteDataSource.signUp(name, email, password);
   }
 
   @override
-  Future<User> login(String name, String email, String password) {
-    return remoteDataSource.login(name, email, password);
+  Future<void> login(String email, String password) {
+    return remoteDataSource.login(email, password);
   }
 }

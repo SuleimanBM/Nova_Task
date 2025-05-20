@@ -2,7 +2,7 @@
 import '../../domain/entities/user.dart';
 
 class UserModel extends User {
-  UserModel({required String name, required String email, required String password})
+  UserModel({String? name, required String email, required String password})
       : super(name: name, email: email, password: password);
 
   factory UserModel.fromJson(Map<String, dynamic> json) {

@@ -7,7 +7,7 @@ class SignUpUseCase {
 
   SignUpUseCase(this.repository);
 
-  Future<User> execute(String name, String email, String password) {
+  Future<void> execute(String name, String email, String password) {
     return repository.signUp(name, email, password);
   }
 }

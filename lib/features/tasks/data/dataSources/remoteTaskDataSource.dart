@@ -3,18 +3,27 @@ import 'package:http/http.dart' as http;
 import 'package:nova_task/features/tasks/data/models/taskStatistics.dart';
 import 'package:nova_task/features/tasks/domain/entities/task.dart';
 import '../models/taskModel.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class RemoteTaskDataSource {
-  final http.Client client;
-  RemoteTaskDataSource(this.client);
+  late final http.Client client;
+  final _secureStorage = FlutterSecureStorage();
 
   static const String _baseUrl = 'https://novatask-server.onrender.com';
-  static const String _localUrl =
-      'http://172.20.80.1:8000'; // Used only for `addTask`
 
-  static const String _token =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFhMzBlYzA2OWM3NTk3ZmI3Y2ZjN2QiLCJpYXQiOjE3NDczNDE0NDksImV4cCI6MTc0Nzk0NjI0OX0.7RK-qKq0mCroREAAFZvApr8jnlrZXje2Oea_kuXluvE';
+  String _token = '';
+
+  // ✅ Private named constructor
+  RemoteTaskDataSource._(this.client, this._token);
+
+  // ✅ Factory method to create an instance
+  static Future<RemoteTaskDataSource> create(http.Client client) async {
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'authToken');
+    print("Token fetched in taskremotedatasource form securestorage $token");
+    if (token == null) throw Exception("Token not found");
+    return RemoteTaskDataSource._(client, token);
+  }
 
   Map<String, String> get _headers => {
         'Authorization': _token,
@@ -60,7 +69,8 @@ class RemoteTaskDataSource {
     String? category,
     bool? isCompleted,
     String? sortBy,
-    String? sortOrder = 'asc', DateTime? date,
+    String? sortOrder = 'asc',
+    DateTime? date,
   }) async {
     try {
       final uri = Uri.parse('$_baseUrl/todo/tasks').replace(

@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import "package:nova_task/features/tasks/domain/entities/task.dart";
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class TodaysTask extends StatefulWidget {
   final List task;
@@ -38,40 +40,38 @@ class _TodaysTaskState extends State<TodaysTask> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Today",
           style: TextStyle(
-              fontSize: 20,
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: Color.fromARGB(255, 17, 16, 16)),
         ),
-        const SizedBox(
-          height: 16,
-        ),
+        16.verticalSpace,
         Container(
-            height: 200,
+            height: 200.h,
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               //border: Border.all(color: Colors.black, width: 1),
             ),
             child: todaysTask.isEmpty
                 ? Container(
-                    height: 200,
+                    height: 200.h,
                     width: screenWidth * 1, // 80% of screen width
-                    margin: const EdgeInsets.only(
-                        right: 16), // spacing between items
-                    padding: const EdgeInsets.all(16),
+                    margin: EdgeInsets.only(
+                        right: 16.w), // spacing between items
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: const Center(
+                    child: Center(
                         child: Text("No tasks today",
-                            style: TextStyle(fontSize: 16))))
+                            style: TextStyle(fontSize: 16.sp))))
                 : ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
                     itemCount: todaysTask.length,
                     itemBuilder: (context, index) {
                       return Padding(
@@ -80,10 +80,10 @@ class _TodaysTaskState extends State<TodaysTask> {
                           width: screenWidth * 0.8, // 80% of screen width
                           margin: const EdgeInsets.only(
                               right: 16), // spacing between items
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.h),
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 255, 255, 255),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -93,7 +93,7 @@ class _TodaysTaskState extends State<TodaysTask> {
                                   todaysTask[index].title,
                                   style: TextStyle(
                                       color: Color.fromARGB(255, 17, 16, 16),
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
@@ -102,7 +102,7 @@ class _TodaysTaskState extends State<TodaysTask> {
                                   todaysTask[index].description,
                                   style: TextStyle(
                                       color: Color.fromARGB(255, 61, 61, 61),
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       fontWeight: FontWeight.w400),
                                 ),
                               ]),

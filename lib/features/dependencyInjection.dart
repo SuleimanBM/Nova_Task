@@ -6,6 +6,12 @@ import 'package:nova_task/features/tasks/domain/useCases/deleteTaskUseCase.dart'
 import 'package:nova_task/features/tasks/domain/useCases/getFilteredTaskUsecase.dart';
 import 'package:nova_task/features/tasks/domain/useCases/getTasksStatisticsUseCase.dart';
 import 'package:nova_task/features/tasks/presentation/widgets/taskCard.dart';
+import 'package:nova_task/features/users/data/datasources/remoteUserDataSource.dart';
+import 'package:nova_task/features/users/data/repositories/authRepositoryImpl.dart';
+import 'package:nova_task/features/users/domain/repositories/authRepository.dart';
+import 'package:nova_task/features/users/domain/useCases/loginUseCase.dart';
+import 'package:nova_task/features/users/domain/useCases/signupUseCase.dart';
+import 'package:nova_task/features/users/presentation/bloc/authBloc.dart';
 
 import './tasks/data/dataSources/remoteTaskDataSource.dart';
 import './tasks/domain/repositories/taskRepository.dart';
@@ -15,56 +21,74 @@ import "./tasks/presentation/bloc/taskBloc.dart";
 // import 'presentation/blocs/task_bloc.dart';
 
 final sl = GetIt.instance;
-
 Future<void> initDependencies() async {
   try {
-    // 1. External dependencies
-    sl.registerLazySingleton<http.Client>(() =>
-        http.Client()); // HTTP client :contentReference[oaicite:11]{index=11}
+    // 1. External dependencies (SYNC)
+    sl.registerLazySingleton<http.Client>(() => http.Client());
 
-    // 2. Data sources
-    sl.registerLazySingleton<RemoteTaskDataSource>(
-      // Register data source
-      () => RemoteTaskDataSource(sl<
-          http
-          .Client>()), // Inject HTTP client :contentReference[oaicite:12]{index=12}
+    // 7. Auth dependencies
+    sl.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSource(sl<http.Client>()),
     );
 
-    // 3. Repository implementation
+    sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
+    );
+
+    sl.registerLazySingleton<SignUpUseCase>(
+      () => SignUpUseCase(sl<AuthRepository>()),
+    );
+
+    sl.registerLazySingleton<LoginUseCase>(
+      () => LoginUseCase(sl<AuthRepository>()),
+    );
+
+    sl.registerLazySingleton<AuthBloc>(
+      () => AuthBloc(sl<LoginUseCase>(), sl<SignUpUseCase>()),
+    );
+
+    // 2. Data sources (ASYNC)
+    sl.registerSingletonAsync<RemoteTaskDataSource>(
+      () async => RemoteTaskDataSource.create(sl<http.Client>()),
+    );
+
+    // 3. Wait for async data sources to initialize
+    await sl.isReady<RemoteTaskDataSource>();
+
+    // 4. Repository implementation (SYNC)
     sl.registerLazySingleton<TaskRepository>(
-      // Bind interface
-      () => TaskRepositoryImpl(
-          sl()), // Inject data source :contentReference[oaicite:13]{index=13}
+      () => TaskRepositoryImpl(sl<RemoteTaskDataSource>()),
     );
 
-    // 4. Use case
+    // 5. Use cases (SYNC)
     sl.registerLazySingleton<GetAllTasksUseCase>(
-      // Register use case
-      () => GetAllTasksUseCase(
-          sl()), // Inject repository :contentReference[oaicite:14]{index=14}
+      () => GetAllTasksUseCase(sl<TaskRepository>()),
     );
-
     sl.registerLazySingleton<GetFilteredTasksUseCase>(
-      // Register use case
-      () => GetFilteredTasksUseCase(
-          sl()), // Inject repository :contentReference[oaicite:14]{index=14}
+      () => GetFilteredTasksUseCase(sl<TaskRepository>()),
     );
     sl.registerLazySingleton<GetTasksStatisticsUseCase>(
-      () => GetTasksStatisticsUseCase(sl()),
+      () => GetTasksStatisticsUseCase(sl<TaskRepository>()),
     );
-    sl.registerLazySingleton<AddTaskUseCase>(() => AddTaskUseCase(sl()));
+    sl.registerLazySingleton<AddTaskUseCase>(
+      () => AddTaskUseCase(sl<TaskRepository>()),
+    );
+    sl.registerLazySingleton<DeleteTaskUseCase>(
+      () => DeleteTaskUseCase(sl<TaskRepository>()),
+    );
 
-    sl.registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase(sl()));
-
+    // 6. Blocs (FACTORY)
     sl.registerFactory<TaskBloc>(
-      // Register Bloc
       () => TaskBloc(
-          sl<GetAllTasksUseCase>(),
-          sl<GetFilteredTasksUseCase>(),
-          sl<GetTasksStatisticsUseCase>(),
-          sl<AddTaskUseCase>(),
-          sl<DeleteTaskUseCase>()), // Inject use case :contentReference[oaicite:15]{index=15}
+        sl<GetAllTasksUseCase>(),
+        sl<GetFilteredTasksUseCase>(),
+        sl<GetTasksStatisticsUseCase>(),
+        sl<AddTaskUseCase>(),
+        sl<DeleteTaskUseCase>(),
+      ),
     );
+
+    
   } catch (e) {
     throw Exception('DI initialization failed: $e');
   }

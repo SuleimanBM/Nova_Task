@@ -6,6 +6,7 @@ import "package:nova_task/features/tasks/presentation/widgets/category_card.dart
 import "../bloc/taskBloc.dart";
 import "../bloc/taskEvents.dart";
 import "../bloc/taskState.dart";
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
@@ -16,9 +17,9 @@ class CategoriesScreen extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-        title: const Text(
+        title: Text(
           'Categories',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
         ),
         scrolledUnderElevation: 0.0,
       ),
@@ -56,19 +57,25 @@ class CategoriesScreen extends StatelessWidget {
                         alignment: WrapAlignment.start,
                         spacing: spacing,
                         runSpacing: 4.0,
-                        children: List.generate(categoryList.length, (index) {
-                          final category = categoryList[index];
-                          return CategoryCard(
-                            width: cardWidth,
-                            category: category.key,
-                            count: category.value,
-                          );
-                        }),
+                        children: categoryList.isEmpty
+                            ? [
+                                const Center(
+                                  
+                                  child: Text("You have no categories"),
+                                )
+                              ]
+                            : List.generate(categoryList.length, (index) {
+                                final category = categoryList[index];
+                                return CategoryCard(
+                                  width: cardWidth,
+                                  category: category.key,
+                                  count: category.value,
+                                );
+                              }),
                       );
                     },
                   ),
                 ]);
-            
           }
 
           return const Center(child: Text("Something went wrong."));

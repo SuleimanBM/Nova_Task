@@ -67,10 +67,9 @@ class TaskRepositoryImpl implements TaskRepository {
     final Object response = await remote.addTask(task);
     return response;
   }
-  
+
   Future<void> deleteTask(String taskId) async {
     // For example, if you're using a local DB or API
     await remote.deleteTask(taskId);
   }
-
 }

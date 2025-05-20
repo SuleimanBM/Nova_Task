@@ -7,6 +7,8 @@ import "package:nova_task/features/tasks/domain/entities/task.dart";
 import '../bloc/taskBloc.dart';
 import '../bloc/taskEvents.dart';
 import '../bloc/taskState.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class AddtaskScreen extends StatefulWidget {
   final Task? task;
@@ -145,7 +147,7 @@ void _confirmDelete(BuildContext context) {
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 245),
           appBar: AppBar(
-            title: Text(widget.pageName),
+            title: Text(widget.pageName, style: TextStyle(fontSize: 24.sp)),
             actions: widget.pageName == "Edit Task"
                 ? [
                     IconButton(
@@ -156,7 +158,7 @@ void _confirmDelete(BuildContext context) {
                         },
                         icon: const Icon(
                           Icons.edit_note_rounded,
-                          size: 32,
+                          size: 24,
                         ))
                   ]
                 : [],
@@ -175,13 +177,15 @@ void _confirmDelete(BuildContext context) {
                       cursorWidth: 1,
                       maxLines: null,
                       minLines: 2,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                      style: TextStyle(fontSize: 16.sp),
+                      decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
                           labelText: 'Title',
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          labelStyle: TextStyle(fontSize: 16.sp),
+                          fillColor:const  Color.fromARGB(255, 255, 255, 255),
                           filled: true),
                     ),
-                    const SizedBox(height: 16),
+                    16.verticalSpace,
                     TextField(
                       controller: _descriptionController,
                       readOnly: readOnly,
@@ -189,34 +193,41 @@ void _confirmDelete(BuildContext context) {
                       cursorWidth: 1,
                       maxLines: null,
                       minLines: 6,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                      style: TextStyle(fontSize: 16.sp),
+                      decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
                           labelText: 'Description',
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          labelStyle: TextStyle(fontSize: 16.sp),
+                          fillColor: const Color.fromARGB(255, 255, 255, 255),
                           filled: true),
                     ),
-                    const SizedBox(height: 16),
+                    16.verticalSpace,
                     TextField(
                       controller: _priorityController,
                       readOnly: readOnly,
+                      style: TextStyle(fontSize: 16.sp),
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         labelText: 'Priority',
+                        labelStyle: TextStyle(fontSize: 16.sp),
                         fillColor: const Color.fromARGB(255, 255, 255, 255),
                         filled: true,
                         suffixIcon: DropdownButton(
-                          items: const [
+                          items: [
                             DropdownMenuItem(
                               value: 'High',
-                              child: Text('High'),
+                              child: Text('High',
+                                  style: TextStyle(fontSize: 12.sp)),
                             ),
                             DropdownMenuItem(
                               value: 'Medium',
-                              child: Text('Medium'),
+                              child: Text('Medium',
+                                  style: TextStyle(fontSize: 12.sp)),
                             ),
                             DropdownMenuItem(
                               value: 'Low',
-                              child: Text('Low'),
+                              child: Text('Low',
+                                  style: TextStyle(fontSize: 12.sp)),
                             ),
                           ],
                           onChanged: (String? newPriority) {
@@ -227,32 +238,38 @@ void _confirmDelete(BuildContext context) {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    16.verticalSpace,
                     TextField(
                       controller: _categoryController,
                       readOnly: true,
+                      style: TextStyle(fontSize: 16.sp),
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         labelText: 'Category',
+                        labelStyle: TextStyle(fontSize: 16.sp),
                         fillColor: const Color.fromARGB(255, 255, 255, 255),
                         filled: true,
                         suffixIcon: DropdownButton(
-                          items: const [
+                          items: [
                             DropdownMenuItem(
                               value: 'Work',
-                              child: Text('Work'),
+                              child: Text('Work',
+                                  style: TextStyle(fontSize: 12.sp)),
                             ),
                             DropdownMenuItem(
                               value: 'School',
-                              child: Text('School'),
+                              child: Text('School',
+                                  style: TextStyle(fontSize: 12.sp)),
                             ),
                             DropdownMenuItem(
                               value: 'Home',
-                              child: Text('Home'),
+                              child: Text('Home',
+                                  style: TextStyle(fontSize: 12.sp)),
                             ),
                             DropdownMenuItem(
                               value: 'Casual',
-                              child: Text('Casual'),
+                              child: Text('Casual',
+                                  style: TextStyle(fontSize: 12.sp)),
                             ),
                           ],
                           onChanged: (String? newCategory) {
@@ -263,10 +280,11 @@ void _confirmDelete(BuildContext context) {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    16.verticalSpace,
                     TextField(
                       controller: _dateController,
-                      readOnly: readOnly,
+                      style: TextStyle(fontSize: 16.sp),
+                      readOnly: true,
                       onTap: () async {
                         final DateTime? pickedDate = await showDatePicker(
                             context: context,
@@ -280,20 +298,22 @@ void _confirmDelete(BuildContext context) {
                           });
                         }
                       },
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
                           labelText: 'Date',
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          labelStyle: TextStyle(fontSize: 16.sp),
+                          fillColor: const Color.fromARGB(255, 255, 255, 255),
                           filled: true,
                           suffixIcon: IconButton(
                             onPressed: null,
-                            icon: Icon(Icons.calendar_month),
+                            icon: Icon(Icons.calendar_month, size: 16.sp,),
                           )),
                     ),
-                    const SizedBox(height: 16),
+                    16.verticalSpace,
                     TextField(
                       controller: _timeController,
-                      readOnly: readOnly,
+                      style: TextStyle(fontSize: 16.sp),
+                      readOnly: true,
                       onTap: () async {
                         final TimeOfDay? pickedTime = await showTimePicker(
                           context: context,
@@ -306,14 +326,15 @@ void _confirmDelete(BuildContext context) {
                           });
                         }
                       },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
                         labelText: 'Time',
-                        fillColor: Color.fromARGB(255, 255, 255, 255),
+                        labelStyle: TextStyle(fontSize: 16.sp),
+                        fillColor: const Color.fromARGB(255, 255, 255, 255),
                         filled: true,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    16.verticalSpace,
                     TextField(
                         controller: _subtaskController,
                         readOnly: readOnly,
@@ -321,43 +342,45 @@ void _confirmDelete(BuildContext context) {
                         cursorWidth: 1,
                         maxLines: null,
                         minLines: 2,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        style: TextStyle(fontSize: 16.sp),
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
                           labelText: 'Subtasks',
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          labelStyle: TextStyle(fontSize: 16.sp),
+                          fillColor: const Color.fromARGB(255, 255, 255, 255),
                           filled: true,
                         )),
-                    const SizedBox(height: 16),
+                    16.verticalSpace,
                     // ignore: prefer_const_constructors
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton(
                           onPressed: () => _confirmDelete(context),
-                          style: const ButtonStyle(
+                          style: ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll<Color>(
                                   Color.fromARGB(255, 48, 48, 48)),
                               padding: WidgetStatePropertyAll(
                                 EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 32),
+                                    vertical: 12.h, horizontal: 32.w),
                               )),
-                          child: const Text(
+                          child: Text(
                             "Delete Task",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                         TextButton(
                           onPressed: () => _handleTaskEdit(context),
-                          style: const ButtonStyle(
+                          style: ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll<Color>(
                                   Color.fromARGB(255, 48, 48, 48)),
                               padding: WidgetStatePropertyAll(
                                 EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 32),
+                                    vertical: 8.h, horizontal: 32.w),
                               )),
-                          child: const Text(
+                          child: Text(
                             "Save Task",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                       ],

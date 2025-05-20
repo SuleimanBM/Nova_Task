@@ -2,9 +2,9 @@ import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:nova_task/features/tasks/domain/entities/task.dart";
 import "package:nova_task/features/tasks/presentation/screens/addtask_screen.dart";
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TaskCard extends StatefulWidget {
-
   final Task task;
 
   const TaskCard({super.key, required this.task});
@@ -44,11 +44,11 @@ class _TaskCardState extends State<TaskCard> {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(8),
-        margin: const EdgeInsets.only(bottom: 8),
+        padding: EdgeInsets.all(8.sp),
+        margin: EdgeInsets.only(bottom: 8.sp),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,8 +63,8 @@ class _TaskCardState extends State<TaskCard> {
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,
                     maxLines: 2,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 17, 16, 16),
                     ),
@@ -78,18 +78,18 @@ class _TaskCardState extends State<TaskCard> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            8.verticalSpace,
             Text(
               _description,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
                 color: Color.fromARGB(255, 17, 16, 16),
               ),
             ),
-            const SizedBox(height: 8),
+            8.verticalSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -97,8 +97,8 @@ class _TaskCardState extends State<TaskCard> {
                 Row(
                   children: [
                     const Icon(Icons.calendar_month),
-                    const SizedBox(width: 4),
-                    Text(_formatDate(_date)),
+                    4.horizontalSpace,
+                    Text(_formatDate(_date), style: TextStyle(fontSize: 14.sp)),
                   ],
                 ),
               ],
@@ -118,7 +118,7 @@ class _TaskCardState extends State<TaskCard> {
     };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: color.withOpacity(0.3),
         borderRadius: BorderRadius.circular(7),
@@ -126,7 +126,7 @@ class _TaskCardState extends State<TaskCard> {
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 16.sp,
           fontWeight: FontWeight.w500,
           color: color,
         ),
