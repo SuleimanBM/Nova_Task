@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:intl/intl.dart";
 import "package:nova_task/features/tasks/domain/entities/task.dart";
+import "package:nova_task/features/tasks/presentation/bloc/taskBloc.dart";
 import "package:nova_task/features/tasks/presentation/screens/addtask_screen.dart";
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -35,11 +37,14 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+           final bloc = BlocProvider.of<TaskBloc>(context);
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                AddtaskScreen(task: widget.task, pageName: "Edit Task"),
+            builder: (context) => BlocProvider<TaskBloc>.value(
+              value: bloc,
+              child: AddtaskScreen(task: widget.task, pageName: "Edit Task"),
+            ),
           ),
         );
       },
