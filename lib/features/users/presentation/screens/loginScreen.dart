@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nova_task/features/tasks/taskHomePage.dart';
 import 'package:nova_task/features/users/presentation/screens/signupScreen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nova_task/main.dart';
@@ -26,10 +27,6 @@ class LoginScreen extends StatelessWidget {
               SnackBar(content: Text(state.message)),
             );
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => MyHomePage()),
-            );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.error)));

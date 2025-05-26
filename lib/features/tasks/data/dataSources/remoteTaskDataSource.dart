@@ -11,7 +11,7 @@ class RemoteTaskDataSource {
 
   static const String _baseUrl = 'https://novatask-server.onrender.com';
 
-  String _token = '';
+  String? _token = '';
 
   // ✅ Private named constructor
   RemoteTaskDataSource._(this.client, this._token);
@@ -21,12 +21,15 @@ class RemoteTaskDataSource {
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'authToken');
     print("Token fetched in taskremotedatasource form securestorage $token");
-    if (token == null) throw Exception("Token not found");
+    if (token == null) {
+      print(
+          'Token not found in secure storage. Proceeding unauthenticated.');
+    }
     return RemoteTaskDataSource._(client, token);
   }
 
   Map<String, String> get _headers => {
-        'Authorization': _token,
+        'Authorization': _token!,
         'Content-Type': 'application/json',
       };
 

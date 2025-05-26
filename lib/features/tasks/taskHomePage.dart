@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SafeArea(
         child: [
-          HomeScreen(),
+          Builder(builder: (context) => HomeScreen()),
           TasksScreen(),
           CategoriesScreen()
         ][currentPageIndex],

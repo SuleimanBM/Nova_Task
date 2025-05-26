@@ -9,7 +9,6 @@ import '../bloc/taskEvents.dart';
 import '../bloc/taskState.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class AddtaskScreen extends StatefulWidget {
   final Task? task;
   final String pageName;
@@ -30,6 +29,7 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
   TextEditingController _subtaskController = TextEditingController();
 
   late bool readOnly;
+  TaskBloc get _taskBloc => BlocProvider.of<TaskBloc>(context);
 
   @override
   void initState() {
@@ -81,7 +81,7 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
       );
 
       // Get the bloc instance safely
-      BlocProvider.of<TaskBloc>(context).add(AddTask(newTask));
+      _taskBloc.add(AddTask(newTask));
 
       // Optionally clear form
       _titleController.clear();
@@ -107,10 +107,10 @@ class _AddtaskScreenState extends State<AddtaskScreen> {
   }
 
   void _deleteTask(BuildContext context) {
-     context.read<TaskBloc>().add(DeleteTask(widget.task!.id));
+    _taskBloc.add(DeleteTask(widget.task!.id));
   }
 
-void _confirmDelete(BuildContext context) {
+  void _confirmDelete(BuildContext context) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -123,7 +123,6 @@ void _confirmDelete(BuildContext context) {
           ),
           TextButton(
             onPressed: () {
-              
               _deleteTask(context);
               Navigator.of(context).pop();
             },
@@ -134,16 +133,13 @@ void _confirmDelete(BuildContext context) {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
-      listener:
-      (context, state) {
-        if (state is TaskLoaded) {
-          Navigator.pop(context);
-        }
-      };
+    return BlocConsumer<TaskBloc, TaskState>(listener: (context, state) {
+      if (state is TaskLoaded) {
+        Navigator.pop(context);
+      }
+    }, builder: (context, state) {
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 245),
           appBar: AppBar(
@@ -182,7 +178,7 @@ void _confirmDelete(BuildContext context) {
                           border: const OutlineInputBorder(),
                           labelText: 'Title',
                           labelStyle: TextStyle(fontSize: 16.sp),
-                          fillColor:const  Color.fromARGB(255, 255, 255, 255),
+                          fillColor: const Color.fromARGB(255, 255, 255, 255),
                           filled: true),
                     ),
                     16.verticalSpace,
@@ -306,7 +302,10 @@ void _confirmDelete(BuildContext context) {
                           filled: true,
                           suffixIcon: IconButton(
                             onPressed: null,
-                            icon: Icon(Icons.calendar_month, size: 16.sp,),
+                            icon: Icon(
+                              Icons.calendar_month,
+                              size: 16.sp,
+                            ),
                           )),
                     ),
                     16.verticalSpace,
@@ -366,7 +365,8 @@ void _confirmDelete(BuildContext context) {
                               )),
                           child: Text(
                             "Delete Task",
-                            style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                         TextButton(
@@ -380,7 +380,8 @@ void _confirmDelete(BuildContext context) {
                               )),
                           child: Text(
                             "Save Task",
-                            style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                       ],

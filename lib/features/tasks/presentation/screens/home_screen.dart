@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 class HomeScreen extends StatelessWidget {
+
   HomeScreen({super.key});
 
   List _getUpcomingTasks(tasks) {
@@ -65,8 +66,9 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            AddtaskScreen(task: null, pageName: "Add Task"),
+                        builder: (context) => BlocProvider<TaskBloc>.value(
+                          value: bloc,
+                          child:AddtaskScreen(task: null, pageName: "Add Task"),),
                       ),
                     );
                   },

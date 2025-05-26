@@ -18,6 +18,7 @@ class TasksScreen extends StatelessWidget {
       if (state is TaskLoading) {
         return const Center(child: CircularProgressIndicator());
       } else if (state is TaskLoaded) {
+           final bloc = BlocProvider.of<TaskBloc>(context);
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 245),
           appBar: AppBar(
@@ -29,9 +30,12 @@ class TasksScreen extends StatelessWidget {
                   onPressed: () async {
                     await Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            AddtaskScreen(task: null, pageName: "Add Task"),
+                     MaterialPageRoute(
+                        builder: (context) => BlocProvider<TaskBloc>.value(
+                          value: bloc,
+                          child:
+                              AddtaskScreen(task: null, pageName: "Add Task"),
+                        ),
                       ),
                     );
                     // Refresh data after returning
